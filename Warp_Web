@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warp Generator</title>
+  <style>
+    body {
+      background: #0d1117;
+      color: #00ff99;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .box {
+      background: #161b22;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 0 15px rgba(0,255,150,0.4);
+    }
+    input, select, button {
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      width: 100%;
+      font-family: monospace;
+    }
+    button {
+      background: #00ff99;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    pre {
+      margin-top: 15px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>⚡ Warp Config Generator</h2>
+    <label>تعداد خروجی:</label>
+    <input type="number" id="count" placeholder="مثلا 10" min="1" max="100">
+    
+    <label>نوع آی‌پی:</label>
+    <select id="ipType">
+      <option value="ipv4">IPv4</option>
+      <option value="ipv6">IPv6</option>
+    </select>
+    
+    <button onclick="generate()">Generate</button>
+    <pre id="output"></pre>
+  </div>
+
+  <script>
+    function randomIPv4() {
+      return `${rand(1,255)}.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}`;
+    }
+    function randomIPv6() {
+      let blocks = [];
+      for (let i=0; i<8; i++) {
+        blocks.push(Math.floor(Math.random()*0xFFFF).toString(16));
+      }
+      return blocks.join(":");
+    }
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function generate() {
+      let count = parseInt(document.getElementById("count").value);
+      let type = document.getElementById("ipType").value;
+      let output = "";
+      for (let i=1; i<=count; i++) {
+        let ip = (type === "ipv4") ? randomIPv4() : randomIPv6();
+        let port = rand(1000, 65000);
+        output += `warp://${ip}:${port}?ifp=40-80&ifps=40-100&ifpd=4-8&ifpm=m4#Telegram:@Academi_vpn-${i}\n`;
+      }
+      document.getElementById("output").textContent = output;
+    }
+  </script>
+</body>
+</html>
