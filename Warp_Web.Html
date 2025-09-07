@@ -81,8 +81,8 @@
       for (let i=1; i<=count; i++) {
         let ip = (type === "ipv4") ? randomIPv4() : randomIPv6();
         let port = rand(1000, 65000);
-        output += `warp://${ip}:${port}?ifp=40-80&ifps=40-100&ifpd=4-8&ifpm=m4#Telegram:@Academi_vpn
-    }
+        output += `warp://${ip}:${port}?ifp=40-80&ifps=40-100&ifpd=4-8&ifpm=m4#Telegram:@Academi_vpn${i}\n`;
+      }
       document.getElementById("output").textContent = output;
     }
   </script>
