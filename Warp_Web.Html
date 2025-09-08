@@ -20,7 +20,7 @@
       border-radius: 12px;
       box-shadow: 0 0 25px rgba(0, 255, 150, 0.5);
     }
-    h1, h2 {
+    h1, h2, h3 {
       text-align: center;
       color: #00ffcc;
     }
@@ -93,11 +93,17 @@
 <button onclick="downloadWarp()">دانلود TXT</button>
 
 <h2>⚡ کانفیگ گیمینگ وایرگارد</h2>
-<label>نام کانفیگ (خودکار Academi- اضافه میشه):</label>
+<label>نام کانفیگ:</label>
 <input type="text" id="wgName" placeholder="مثلاً gaming">
 <button onclick="generateWG()">ساخت کانفیگ</button>
 <textarea id="wgConfig" rows="14" readonly></textarea>
 <button onclick="downloadWG()">دانلود کانفیگ</button>
+
+<h3>🔹 گزینه ۱۰: WireGuard برای Hiddify + V2Ray</h3>
+<pre id="opt10">bash <(curl -fsSL https://raw.githubusercontent.com/Kolandone/wireguard-v2hiddify/main/install.sh)</pre>
+<button onclick="copyOpt10()">کپی دستور</button>
+<button onclick="showOpt10Script()">نمایش متن اسکریپت</button>
+<pre id="opt10Script" style="display:none"></pre>
 
 <div class="signature">
   <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a><br>
@@ -125,25 +131,22 @@
         let ip = (type === "ipv4") ? randomIPv4() : randomIPv6();
         let port = rand(1000, 65000);
         if (oType === "ip") {
-          out += `${ip}:${port}  (ping...)
-`;
+          out += `${ip}:${port}  (ping... )\n`;
         } else {
-          out += `warp://${ip}:${port}?ifp=40-80&ifps=40-100&ifpd=4-8&ifpm=m4#Telegram:@Academi_vpn${i}  (ping...)
-`;
+          out += `warp://${ip}:${port}?ifp=40-80&ifps=40-100&ifpd=4-8&ifpm=m4#Telegram:@Academi_vpn${i}\n`;
         }
       }
       document.getElementById("warpOutput").textContent = out;
     }
     function copyWarp() {
       let text = document.getElementById("warpOutput").textContent;
-      // پینگ‌ها حذف بشن
-      text = text.replace(/\s*ping\.\.\./g, "");
+      text = text.replace(/\s*ping.*?/g, "");
       navigator.clipboard.writeText(text);
       alert("کپی شد!");
     }
     function downloadWarp() {
       let text = document.getElementById("warpOutput").textContent;
-      text = text.replace(/\s*ping\.\.\./g, "");
+      text = text.replace(/\s*ping.*?/g, "");
       const blob = new Blob([text], { type: 'text/plain' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -151,7 +154,6 @@
       a.click();
     }
 
-    // WireGuard config
     function uint8ArrayToBase64(bytes) {
       let binary = '';
       const len = bytes.byteLength;
@@ -171,18 +173,7 @@
       const nameInput = document.getElementById("wgName").value.trim();
       const filename = `Academi-${nameInput || "wg"}.conf`;
 
-      const config = `[Interface]
-PrivateKey = ${privateKey}
-Address = ${randomIPv4()}/32
-DNS = ${dns.join(", ")}
-MTU = ${mtu}
-
-[Peer]
-PublicKey = ${publicKey}
-PresharedKey = ${presharedKey}
-Endpoint = ${endpoint}
-PersistentKeepalive = 25
-AllowedIPs = 0.0.0.0/0, ::/0`;
+      const config = `[Interface]\nPrivateKey = ${privateKey}\nAddress = ${randomIPv4()}/32\nDNS = ${dns.join(", ")}\nMTU = ${mtu}\n\n[Peer]\nPublicKey = ${publicKey}\nPresharedKey = ${presharedKey}\nEndpoint = ${endpoint}\nPersistentKeepalive = 25\nAllowedIPs = 0.0.0.0/0, ::/0`;
 
       document.getElementById("wgConfig").value = config;
       document.getElementById("wgConfig").setAttribute("data-filename", filename);
@@ -195,6 +186,20 @@ AllowedIPs = 0.0.0.0/0, ::/0`;
       a.href = URL.createObjectURL(blob);
       a.download = filename;
       a.click();
+    }
+
+    function copyOpt10() {
+      const text = document.getElementById("opt10").textContent;
+      navigator.clipboard.writeText(text);
+      alert("دستور کپی شد!");
+    }
+    async function showOpt10Script() {
+      const url = "https://raw.githubusercontent.com/Kolandone/wireguard-v2hiddify/main/install.sh";
+      const res = await fetch(url);
+      const script = await res.text();
+      const pre = document.getElementById("opt10Script");
+      pre.style.display = "block";
+      pre.textContent = script;
     }
   </script></body>
 </html>
