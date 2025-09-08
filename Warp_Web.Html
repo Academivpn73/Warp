@@ -1,35 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="fa">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Warp Generator</title>
+  <title>Warp & WireGuard Panel</title>
   <style>
     body {
-      background: #0d1117;
+      background: url('https://i.pinimg.com/originals/9f/66/95/9f6695f50224fae201f6e6135cfe4ce7.jpg') no-repeat center center fixed;
+      background-size: cover;
       color: #00ff99;
       font-family: monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      margin: 0;
+      padding: 0;
     }
-    .box {
-      background: #161b22;
-      padding: 20px;
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: rgba(0, 0, 0, 0.9);
+      padding: 25px;
       border-radius: 12px;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0 0 15px rgba(0,255,150,0.4);
+      box-shadow: 0 0 25px rgba(0, 255, 150, 0.5);
     }
-    input, select, button {
-      margin: 5px 0;
-      padding: 8px;
+    h1, h2 {
+      text-align: center;
+      color: #00ffcc;
+    }
+    label {
+      font-size: 14px;
+      margin-top: 10px;
+      display: block;
+    }
+    input, select, button, textarea {
+      width: 100%;
+      margin: 6px 0;
+      padding: 10px;
       border-radius: 6px;
       border: none;
-      width: 100%;
       font-family: monospace;
+    }
+    input, select, textarea {
+      background: #111;
+      color: #eee;
+      border: 1px solid #333;
     }
     button {
       background: #00ff99;
@@ -37,54 +48,153 @@
       font-weight: bold;
       cursor: pointer;
     }
+    button:hover {
+      background: #00cc77;
+    }
     pre {
-      margin-top: 15px;
+      background: #111;
+      padding: 10px;
+      border-radius: 6px;
       white-space: pre-wrap;
       word-break: break-word;
+      color: #eee;
+    }
+    .signature {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #aaa;
+    }
+    .signature a {
+      color: #00ccff;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h2>⚡ Warp Config Generator</h2>
+  <div class="container">
+    <h1>🌐 Warp Generator</h1>
     <label>تعداد خروجی:</label>
-    <input type="number" id="count" placeholder="مثلا 10" min="1" max="100">
-    
-    <label>نوع آی‌پی:</label>
-    <select id="ipType">
-      <option value="ipv4">IPv4</option>
-      <option value="ipv6">IPv6</option>
-    </select>
-    
-    <button onclick="generate()">Generate</button>
-    <pre id="output"></pre>
-  </div>
+    <input type="number" id="count" placeholder="مثلاً 10" min="1" max="100"><label>نوع آی‌پی:</label>
+<select id="ipType">
+  <option value="ipv4">IPv4</option>
+  <option value="ipv6">IPv6</option>
+</select>
 
-  <script>
+<label>نوع خروجی:</label>
+<select id="outputType">
+  <option value="ip">فقط IP:Port</option>
+  <option value="warp">کانفیگ warp://</option>
+</select>
+
+<button onclick="generateWarp()">ساخت خروجی WARP</button>
+<pre id="warpOutput"></pre>
+<button onclick="copyWarp()">کپی خروجی‌ها</button>
+<button onclick="downloadWarp()">دانلود TXT</button>
+
+<h2>⚡ کانفیگ گیمینگ وایرگارد</h2>
+<label>نام کانفیگ (خودکار Academi- اضافه میشه):</label>
+<input type="text" id="wgName" placeholder="مثلاً gaming">
+<button onclick="generateWG()">ساخت کانفیگ</button>
+<textarea id="wgConfig" rows="14" readonly></textarea>
+<button onclick="downloadWG()">دانلود کانفیگ</button>
+
+<div class="signature">
+  <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a><br>
+  سازنده: مهدی
+</div>
+
+  </div>  <script>
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
     function randomIPv4() {
       return `${rand(1,255)}.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}`;
     }
     function randomIPv6() {
       let blocks = [];
-      for (let i=0; i<8; i++) {
-        blocks.push(Math.floor(Math.random()*0xFFFF).toString(16));
-      }
+      for (let i=0; i<8; i++) blocks.push(Math.floor(Math.random()*0xFFFF).toString(16));
       return blocks.join(":");
     }
-    function rand(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-    function generate() {
+    function generateWarp() {
       let count = parseInt(document.getElementById("count").value);
       let type = document.getElementById("ipType").value;
-      let output = "";
+      let oType = document.getElementById("outputType").value;
+      let out = "";
       for (let i=1; i<=count; i++) {
         let ip = (type === "ipv4") ? randomIPv4() : randomIPv6();
         let port = rand(1000, 65000);
-        output += `warp://${ip}:${port}?ifp=40-80&ifps=40-100&ifpd=4-8&ifpm=m4#Telegram:@Academi_vpn${i}\n`;
+        if (oType === "ip") {
+          out += `${ip}:${port}  (ping...)
+`;
+        } else {
+          out += `warp://${ip}:${port}?ifp=40-80&ifps=40-100&ifpd=4-8&ifpm=m4#Telegram:@Academi_vpn${i}  (ping...)
+`;
+        }
       }
-      document.getElementById("output").textContent = output;
+      document.getElementById("warpOutput").textContent = out;
     }
-  </script>
-</body>
+    function copyWarp() {
+      let text = document.getElementById("warpOutput").textContent;
+      // پینگ‌ها حذف بشن
+      text = text.replace(/\s*ping\.\.\./g, "");
+      navigator.clipboard.writeText(text);
+      alert("کپی شد!");
+    }
+    function downloadWarp() {
+      let text = document.getElementById("warpOutput").textContent;
+      text = text.replace(/\s*ping\.\.\./g, "");
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = "warp-servers.txt";
+      a.click();
+    }
+
+    // WireGuard config
+    function uint8ArrayToBase64(bytes) {
+      let binary = '';
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+    function generateWG() {
+      const privateKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
+      const publicKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
+      const presharedKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
+      const mtu = rand(1280,1500);
+      const endpoint = `${randomIPv4()}:${rand(10000, 65000)}`;
+      const dns = ["10.202.10.10", randomIPv4()];
+
+      const nameInput = document.getElementById("wgName").value.trim();
+      const filename = `Academi-${nameInput || "wg"}.conf`;
+
+      const config = `[Interface]
+PrivateKey = ${privateKey}
+Address = ${randomIPv4()}/32
+DNS = ${dns.join(", ")}
+MTU = ${mtu}
+
+[Peer]
+PublicKey = ${publicKey}
+PresharedKey = ${presharedKey}
+Endpoint = ${endpoint}
+PersistentKeepalive = 25
+AllowedIPs = 0.0.0.0/0, ::/0`;
+
+      document.getElementById("wgConfig").value = config;
+      document.getElementById("wgConfig").setAttribute("data-filename", filename);
+    }
+    function downloadWG() {
+      const filename = document.getElementById("wgConfig").getAttribute("data-filename") || "Academi-wg.conf";
+      const content = document.getElementById("wgConfig").value;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
+  </script></body>
 </html>
