@@ -17,6 +17,7 @@
       background: #f5f5f5;
       color: #222;
     }
+
     header {
       display: flex;
       justify-content: space-between;
@@ -38,36 +39,53 @@
       from { text-shadow: 0 0 10px #ff00ff; }
       to { text-shadow: 0 0 25px #00ccff; }
     }
-    .menu-icon {
+
+    /* دکمه همبرگری */
+    .hamburger {
       font-size: 28px;
       cursor: pointer;
-    }
-    .menu {
-      position: fixed;
-      top: 0;
-      right: -250px;
-      width: 250px;
-      height: 100%;
-      background: rgba(20, 20, 20, 0.95);
-      padding: 60px 20px;
-      transition: right 0.3s ease-in-out;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    .menu.active {
-      right: 0;
-    }
-    .menu a {
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.6);
       color: #00ccff;
+      transition: background 0.3s;
+    }
+    .hamburger:hover {
+      background: rgba(0,0,0,0.9);
+    }
+
+    /* منوی کشویی */
+    .dropdown-menu {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background: rgba(20, 20, 20, 0.95);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      animation: slideDown 0.4s ease forwards;
+    }
+    .dropdown-menu a {
+      color: #00ccff;
+      padding: 12px 20px;
       text-decoration: none;
       font-weight: bold;
-      font-size: 18px;
-      transition: color 0.3s;
+      font-size: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: background 0.3s, color 0.3s;
     }
-    .menu a:hover {
-      color: #ff00ff;
+    .dropdown-menu a:hover {
+      background: #00ccff;
+      color: #000;
     }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* بخش لوگو و معرفی */
     .hero {
       text-align: center;
       padding-top: 120px;
@@ -88,6 +106,7 @@
       font-size: 28px;
       color: #00ccff;
     }
+
     .description {
       max-width: 700px;
       margin: 30px auto;
@@ -95,6 +114,7 @@
       font-size: 18px;
       line-height: 1.6;
     }
+
     .footer {
       text-align: center;
       margin: 40px 0 20px;
@@ -105,9 +125,11 @@
       text-decoration: none;
       margin: 0 5px;
     }
+
     .toggle-mode {
       cursor: pointer;
       font-size: 20px;
+      margin-left: 15px;
     }
   </style>
 </head>
@@ -116,16 +138,15 @@
     <h1>Academi VPN</h1>
     <div>
       <span class="toggle-mode" onclick="toggleMode()">🌙</span>
-      <span class="menu-icon" onclick="toggleMenu()">☰</span>
+      <span class="hamburger" onclick="toggleMenu()">☰</span>
+    </div>
+    <div class="dropdown-menu" id="dropdownMenu">
+      <a href="warp.html">🌐 Warp Generator</a>
+      <a href="wg.html">⚡ WireGuard Gaming</a>
+      <a href="wg-v2ray.html">🔹 WireGuard برای V2Ray</a>
+      <a href="telegram.html">📡 پروکسی تلگرام</a>
     </div>
   </header>
-
-  <div class="menu" id="menu">
-    <a href="warp.html">🌐 Warp Generator</a>
-    <a href="wg.html">⚡ WireGuard Gaming</a>
-    <a href="wg-v2ray.html">🔹 WireGuard برای V2Ray</a>
-    <a href="telegram.html">📡 پروکسی تلگرام</a>
-  </div>
 
   <div class="hero">
     <img src="logo.jpg" alt="Academi VPN Logo">
@@ -152,7 +173,8 @@
 
   <script>
     function toggleMenu() {
-      document.getElementById('menu').classList.toggle('active');
+      const menu = document.getElementById('dropdownMenu');
+      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
     }
     function toggleMode() {
       document.body.classList.toggle('light');
