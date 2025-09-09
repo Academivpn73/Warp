@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="fa">
+<!DOCTYPE html>
+<html lang="fa">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -69,48 +70,84 @@
       color: #00ccff;
       text-decoration: none;
     }
+    .menu {
+      background: #111;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+    .menu button {
+      width: 100%;
+      margin: 5px 0;
+    }
+    .section {
+      display: none;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🌐 Warp Generator</h1>
-    <label>تعداد خروجی:</label>
-    <input type="number" id="count" placeholder="مثلاً 10" min="1" max="100"><label>نوع آی‌پی:</label>
-<select id="ipType">
-  <option value="ipv4">IPv4</option>
-  <option value="ipv6">IPv6</option>
-</select>
+    <h1>🌐 Warp & WireGuard Panel</h1>
+    <div class="menu">
+      <button onclick="showSection('warpSection')">🌐 Warp Generator</button>
+      <button onclick="showSection('wgSection')">⚡ کانفیگ گیمینگ وایرگارد</button>
+      <button onclick="showSection('opt10Section')">🔹 گزینه ۱۰: Hiddify + V2Ray</button>
+    </div>
 
-<label>نوع خروجی:</label>
-<select id="outputType">
-  <option value="ip">فقط IP:Port</option>
-  <option value="warp">کانفیگ warp://</option>
-</select>
+    <!-- بخش WARP -->
+    <div id="warpSection" class="section">
+      <label>تعداد خروجی:</label>
+      <input type="number" id="count" placeholder="مثلاً 10" min="1" max="100">
 
-<button onclick="generateWarp()">ساخت خروجی WARP</button>
-<pre id="warpOutput"></pre>
-<button onclick="copyWarp()">کپی خروجی‌ها</button>
-<button onclick="downloadWarp()">دانلود TXT</button>
+      <label>نوع آی‌پی:</label>
+      <select id="ipType">
+        <option value="ipv4">IPv4</option>
+        <option value="ipv6">IPv6</option>
+      </select>
 
-<h2>⚡ کانفیگ گیمینگ وایرگارد</h2>
-<label>نام کانفیگ:</label>
-<input type="text" id="wgName" placeholder="مثلاً gaming">
-<button onclick="generateWG()">ساخت کانفیگ</button>
-<textarea id="wgConfig" rows="14" readonly></textarea>
-<button onclick="downloadWG()">دانلود کانفیگ</button>
+      <label>نوع خروجی:</label>
+      <select id="outputType">
+        <option value="ip">فقط IP:Port</option>
+        <option value="warp">کانفیگ warp://</option>
+      </select>
 
-<h3>🔹 گزینه ۱۰: WireGuard برای Hiddify + V2Ray</h3>
-<pre id="opt10">bash <(curl -fsSL https://raw.githubusercontent.com/Kolandone/wireguard-v2hiddify/main/install.sh)</pre>
-<button onclick="copyOpt10()">کپی دستور</button>
-<button onclick="showOpt10Script()">نمایش متن اسکریپت</button>
-<pre id="opt10Script" style="display:none"></pre>
+      <button onclick="generateWarp()">ساخت خروجی WARP</button>
+      <pre id="warpOutput"></pre>
+      <button onclick="copyWarp()">کپی خروجی‌ها</button>
+      <button onclick="downloadWarp()">دانلود TXT</button>
+    </div>
 
-<div class="signature">
-  <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a><br>
-  سازنده: مهدی
-</div>
+    <!-- بخش WireGuard Gaming -->
+    <div id="wgSection" class="section">
+      <label>نام کانفیگ:</label>
+      <input type="text" id="wgName" placeholder="مثلاً gaming">
+      <button onclick="generateWG()">ساخت کانفیگ</button>
+      <textarea id="wgConfig" rows="14" readonly></textarea>
+      <button onclick="downloadWG()">دانلود کانفیگ</button>
+    </div>
 
-  </div>  <script>
+    <!-- بخش گزینه ۱۰ -->
+    <div id="opt10Section" class="section">
+      <label>نام کانفیگ:</label>
+      <input type="text" id="opt10Name" placeholder="مثلاً hiddify">
+      <button onclick="generateOpt10()">ساخت کانفیگ Hiddify + V2Ray</button>
+      <textarea id="opt10Config" rows="14" readonly></textarea>
+      <button onclick="downloadOpt10()">دانلود کانفیگ</button>
+    </div>
+
+    <div class="signature">
+      <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a><br>
+      سازنده: مهدی
+    </div>
+  </div>
+
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
     function rand(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -122,6 +159,8 @@
       for (let i=0; i<8; i++) blocks.push(Math.floor(Math.random()*0xFFFF).toString(16));
       return blocks.join(":");
     }
+
+    // بخش Warp
     function generateWarp() {
       let count = parseInt(document.getElementById("count").value);
       let type = document.getElementById("ipType").value;
@@ -140,13 +179,13 @@
     }
     function copyWarp() {
       let text = document.getElementById("warpOutput").textContent;
-      text = text.replace(/\s*ping.*?/g, "");
+      text = text.replace(/\s*\(ping.*?\)/g, "");
       navigator.clipboard.writeText(text);
       alert("کپی شد!");
     }
     function downloadWarp() {
       let text = document.getElementById("warpOutput").textContent;
-      text = text.replace(/\s*ping.*?/g, "");
+      text = text.replace(/\s*\(ping.*?\)/g, "");
       const blob = new Blob([text], { type: 'text/plain' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -154,6 +193,7 @@
       a.click();
     }
 
+    // ساخت کلید Base64
     function uint8ArrayToBase64(bytes) {
       let binary = '';
       const len = bytes.byteLength;
@@ -162,6 +202,8 @@
       }
       return btoa(binary);
     }
+
+    // بخش WireGuard Gaming
     function generateWG() {
       const privateKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
       const publicKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
@@ -173,7 +215,18 @@
       const nameInput = document.getElementById("wgName").value.trim();
       const filename = `Academi-${nameInput || "wg"}.conf`;
 
-      const config = `[Interface]\nPrivateKey = ${privateKey}\nAddress = ${randomIPv4()}/32\nDNS = ${dns.join(", ")}\nMTU = ${mtu}\n\n[Peer]\nPublicKey = ${publicKey}\nPresharedKey = ${presharedKey}\nEndpoint = ${endpoint}\nPersistentKeepalive = 25\nAllowedIPs = 0.0.0.0/0, ::/0`;
+      const config = `[Interface]
+PrivateKey = ${privateKey}
+Address = ${randomIPv4()}/32
+DNS = ${dns.join(", ")}
+MTU = ${mtu}
+
+[Peer]
+PublicKey = ${publicKey}
+PresharedKey = ${presharedKey}
+Endpoint = ${endpoint}
+PersistentKeepalive = 25
+AllowedIPs = 0.0.0.0/0, ::/0`;
 
       document.getElementById("wgConfig").value = config;
       document.getElementById("wgConfig").setAttribute("data-filename", filename);
@@ -188,18 +241,43 @@
       a.click();
     }
 
-    function copyOpt10() {
-      const text = document.getElementById("opt10").textContent;
-      navigator.clipboard.writeText(text);
-      alert("دستور کپی شد!");
+    // بخش گزینه ۱۰ (Hiddify + V2Ray)
+    function generateOpt10() {
+      const privateKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
+      const publicKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
+      const presharedKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
+      const mtu = 1280;
+      const endpoint = `${randomIPv4()}:${rand(10000, 65000)}`;
+      const dns = ["1.1.1.1", "8.8.8.8"];
+
+      const nameInput = document.getElementById("opt10Name").value.trim();
+      const filename = `Academi-${nameInput || "hiddify"}.conf`;
+
+      const config = `[Interface]
+PrivateKey = ${privateKey}
+Address = 10.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}/32
+DNS = ${dns.join(", ")}
+MTU = ${mtu}
+
+[Peer]
+PublicKey = ${publicKey}
+PresharedKey = ${presharedKey}
+Endpoint = ${endpoint}
+PersistentKeepalive = 25
+AllowedIPs = 0.0.0.0/0, ::/0`;
+
+      document.getElementById("opt10Config").value = config;
+      document.getElementById("opt10Config").setAttribute("data-filename", filename);
     }
-    async function showOpt10Script() {
-      const url = "https://raw.githubusercontent.com/Kolandone/wireguard-v2hiddify/main/install.sh";
-      const res = await fetch(url);
-      const script = await res.text();
-      const pre = document.getElementById("opt10Script");
-      pre.style.display = "block";
-      pre.textContent = script;
+    function downloadOpt10() {
+      const filename = document.getElementById("opt10Config").getAttribute("data-filename") || "Academi-hiddify.conf";
+      const content = document.getElementById("opt10Config").value;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
     }
-  </script></body>
+  </script>
+</body>
 </html>
