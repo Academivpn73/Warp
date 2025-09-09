@@ -3,280 +3,161 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Warp & WireGuard Panel</title>
+  <title>Academi VPN Panel</title>
   <style>
     body {
-      background: url('https://i.pinimg.com/originals/9f/66/95/9f6695f50224fae201f6e6135cfe4ce7.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: #00ff99;
-      font-family: monospace;
       margin: 0;
       padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background 0.5s, color 0.5s;
+      background: #0a0a0a;
+      color: #fff;
     }
-    .container {
-      max-width: 900px;
-      margin: 30px auto;
-      background-color: rgba(0, 0, 0, 0.9);
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 0 25px rgba(0, 255, 150, 0.5);
+    body.light {
+      background: #f5f5f5;
+      color: #222;
     }
-    h1, h2, h3 {
-      text-align: center;
-      color: #00ffcc;
-    }
-    label {
-      font-size: 14px;
-      margin-top: 10px;
-      display: block;
-    }
-    input, select, button, textarea {
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: rgba(0, 0, 0, 0.8);
+      position: fixed;
       width: 100%;
-      margin: 6px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      font-family: monospace;
+      top: 0;
+      z-index: 1000;
     }
-    input, select, textarea {
-      background: #111;
-      color: #eee;
-      border: 1px solid #333;
+    header h1 {
+      font-size: 20px;
+      color: #ff00ff;
+      margin: 0;
+      animation: glow 2s infinite alternate;
     }
-    button {
-      background: #00ff99;
-      color: #000;
-      font-weight: bold;
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ff00ff; }
+      to { text-shadow: 0 0 25px #00ccff; }
+    }
+    .menu-icon {
+      font-size: 28px;
       cursor: pointer;
     }
-    button:hover {
-      background: #00cc77;
+    .menu {
+      position: fixed;
+      top: 0;
+      right: -250px;
+      width: 250px;
+      height: 100%;
+      background: rgba(20, 20, 20, 0.95);
+      padding: 60px 20px;
+      transition: right 0.3s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
     }
-    pre {
-      background: #111;
-      padding: 10px;
-      border-radius: 6px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: #eee;
+    .menu.active {
+      right: 0;
     }
-    .signature {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 14px;
-      color: #aaa;
-    }
-    .signature a {
+    .menu a {
       color: #00ccff;
       text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+      transition: color 0.3s;
     }
-    .menu {
-      background: #111;
-      padding: 10px;
-      border-radius: 6px;
-      margin-bottom: 15px;
+    .menu a:hover {
+      color: #ff00ff;
     }
-    .menu button {
-      width: 100%;
-      margin: 5px 0;
+    .hero {
+      text-align: center;
+      padding-top: 120px;
     }
-    .section {
-      display: none;
+    .hero img {
+      width: 200px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px #ff00ff;
+      animation: pulse 3s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); box-shadow: 0 0 40px #00ccff; }
+      100% { transform: scale(1); }
+    }
+    .hero h2 {
       margin-top: 20px;
+      font-size: 28px;
+      color: #00ccff;
+    }
+    .description {
+      max-width: 700px;
+      margin: 30px auto;
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .footer {
+      text-align: center;
+      margin: 40px 0 20px;
+      font-size: 16px;
+    }
+    .footer a {
+      color: #00ccff;
+      text-decoration: none;
+      margin: 0 5px;
+    }
+    .toggle-mode {
+      cursor: pointer;
+      font-size: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🌐 Warp & WireGuard Panel</h1>
-    <div class="menu">
-      <button onclick="showSection('warpSection')">🌐 Warp Generator</button>
-      <button onclick="showSection('wgSection')">⚡ کانفیگ گیمینگ وایرگارد</button>
-      <button onclick="showSection('opt10Section')">🔹 گزینه ۱۰: Hiddify + V2Ray</button>
+  <header>
+    <h1>Academi VPN</h1>
+    <div>
+      <span class="toggle-mode" onclick="toggleMode()">🌙</span>
+      <span class="menu-icon" onclick="toggleMenu()">☰</span>
     </div>
+  </header>
 
-    <!-- بخش WARP -->
-    <div id="warpSection" class="section">
-      <label>تعداد خروجی:</label>
-      <input type="number" id="count" placeholder="مثلاً 10" min="1" max="100">
+  <div class="menu" id="menu">
+    <a href="warp.html">🌐 Warp Generator</a>
+    <a href="wg.html">⚡ WireGuard Gaming</a>
+    <a href="wg-v2ray.html">🔹 WireGuard برای V2Ray</a>
+    <a href="telegram.html">📡 پروکسی تلگرام</a>
+  </div>
 
-      <label>نوع آی‌پی:</label>
-      <select id="ipType">
-        <option value="ipv4">IPv4</option>
-        <option value="ipv6">IPv6</option>
-      </select>
+  <div class="hero">
+    <img src="logo.jpg" alt="Academi VPN Logo">
+    <h2>به پنل Academi VPN خوش آمدید</h2>
+  </div>
 
-      <label>نوع خروجی:</label>
-      <select id="outputType">
-        <option value="ip">فقط IP:Port</option>
-        <option value="warp">کانفیگ warp://</option>
-      </select>
+  <div class="description">
+    <p>
+      این وبسایت شامل ابزارهای مختلف برای تولید کانفیگ‌ها و سرورها است.<br>
+      شما می‌توانید از طریق منوی بالا، بخش مورد نظر خود را انتخاب کنید:
+    </p>
+    <ul style="list-style:none; padding:0;">
+      <li>🌐 تولید آی‌پی و کانفیگ Warp</li>
+      <li>⚡ ساخت کانفیگ WireGuard Gaming</li>
+      <li>🔹 خروجی WireGuard برای V2Ray</li>
+      <li>📡 ساخت پروکسی تلگرام</li>
+    </ul>
+  </div>
 
-      <button onclick="generateWarp()">ساخت خروجی WARP</button>
-      <pre id="warpOutput"></pre>
-      <button onclick="copyWarp()">کپی خروجی‌ها</button>
-      <button onclick="downloadWarp()">دانلود TXT</button>
-    </div>
-
-    <!-- بخش WireGuard Gaming -->
-    <div id="wgSection" class="section">
-      <label>نام کانفیگ:</label>
-      <input type="text" id="wgName" placeholder="مثلاً gaming">
-      <button onclick="generateWG()">ساخت کانفیگ</button>
-      <textarea id="wgConfig" rows="14" readonly></textarea>
-      <button onclick="downloadWG()">دانلود کانفیگ</button>
-    </div>
-
-    <!-- بخش گزینه ۱۰ -->
-    <div id="opt10Section" class="section">
-      <label>نام کانفیگ:</label>
-      <input type="text" id="opt10Name" placeholder="مثلاً hiddify">
-      <button onclick="generateOpt10()">ساخت کانفیگ Hiddify + V2Ray</button>
-      <textarea id="opt10Config" rows="14" readonly></textarea>
-      <button onclick="downloadOpt10()">دانلود کانفیگ</button>
-    </div>
-
-    <div class="signature">
-      <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a><br>
-      سازنده: مهدی
-    </div>
+  <div class="footer">
+    <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a> | 
+    <a href="https://t.me/MahdiAGM0">Admin By : @MahdiAGM0</a>
   </div>
 
   <script>
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
+    function toggleMenu() {
+      document.getElementById('menu').classList.toggle('active');
     }
-
-    function rand(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-    function randomIPv4() {
-      return `${rand(1,255)}.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}`;
-    }
-    function randomIPv6() {
-      let blocks = [];
-      for (let i=0; i<8; i++) blocks.push(Math.floor(Math.random()*0xFFFF).toString(16));
-      return blocks.join(":");
-    }
-
-    // بخش Warp
-    function generateWarp() {
-      let count = parseInt(document.getElementById("count").value);
-      let type = document.getElementById("ipType").value;
-      let oType = document.getElementById("outputType").value;
-      let out = "";
-      for (let i=1; i<=count; i++) {
-        let ip = (type === "ipv4") ? randomIPv4() : randomIPv6();
-        let port = rand(1000, 65000);
-        if (oType === "ip") {
-          out += `${ip}:${port}  (ping... )\n`;
-        } else {
-          out += `warp://${ip}:${port}?ifp=40-80&ifps=40-100&ifpd=4-8&ifpm=m4#Telegram:@Academi_vpn${i}\n`;
-        }
-      }
-      document.getElementById("warpOutput").textContent = out;
-    }
-    function copyWarp() {
-      let text = document.getElementById("warpOutput").textContent;
-      text = text.replace(/\s*\(ping.*?\)/g, "");
-      navigator.clipboard.writeText(text);
-      alert("کپی شد!");
-    }
-    function downloadWarp() {
-      let text = document.getElementById("warpOutput").textContent;
-      text = text.replace(/\s*\(ping.*?\)/g, "");
-      const blob = new Blob([text], { type: 'text/plain' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = "warp-servers.txt";
-      a.click();
-    }
-
-    // ساخت کلید Base64
-    function uint8ArrayToBase64(bytes) {
-      let binary = '';
-      const len = bytes.byteLength;
-      for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-      }
-      return btoa(binary);
-    }
-
-    // بخش WireGuard Gaming
-    function generateWG() {
-      const privateKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
-      const publicKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
-      const presharedKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
-      const mtu = rand(1280,1500);
-      const endpoint = `${randomIPv4()}:${rand(10000, 65000)}`;
-      const dns = ["10.202.10.10", randomIPv4()];
-
-      const nameInput = document.getElementById("wgName").value.trim();
-      const filename = `Academi-${nameInput || "wg"}.conf`;
-
-      const config = `[Interface]
-PrivateKey = ${privateKey}
-Address = ${randomIPv4()}/32
-DNS = ${dns.join(", ")}
-MTU = ${mtu}
-
-[Peer]
-PublicKey = ${publicKey}
-PresharedKey = ${presharedKey}
-Endpoint = ${endpoint}
-PersistentKeepalive = 25
-AllowedIPs = 0.0.0.0/0, ::/0`;
-
-      document.getElementById("wgConfig").value = config;
-      document.getElementById("wgConfig").setAttribute("data-filename", filename);
-    }
-    function downloadWG() {
-      const filename = document.getElementById("wgConfig").getAttribute("data-filename") || "Academi-wg.conf";
-      const content = document.getElementById("wgConfig").value;
-      const blob = new Blob([content], { type: 'text/plain' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
-      a.click();
-    }
-
-    // بخش گزینه ۱۰ (Hiddify + V2Ray)
-    function generateOpt10() {
-      const privateKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
-      const publicKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
-      const presharedKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
-      const mtu = 1280;
-      const endpoint = `${randomIPv4()}:${rand(10000, 65000)}`;
-      const dns = ["1.1.1.1", "8.8.8.8"];
-
-      const nameInput = document.getElementById("opt10Name").value.trim();
-      const filename = `Academi-${nameInput || "hiddify"}.conf`;
-
-      const config = `[Interface]
-PrivateKey = ${privateKey}
-Address = 10.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}/32
-DNS = ${dns.join(", ")}
-MTU = ${mtu}
-
-[Peer]
-PublicKey = ${publicKey}
-PresharedKey = ${presharedKey}
-Endpoint = ${endpoint}
-PersistentKeepalive = 25
-AllowedIPs = 0.0.0.0/0, ::/0`;
-
-      document.getElementById("opt10Config").value = config;
-      document.getElementById("opt10Config").setAttribute("data-filename", filename);
-    }
-    function downloadOpt10() {
-      const filename = document.getElementById("opt10Config").getAttribute("data-filename") || "Academi-hiddify.conf";
-      const content = document.getElementById("opt10Config").value;
-      const blob = new Blob([content], { type: 'text/plain' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
-      a.click();
+    function toggleMode() {
+      document.body.classList.toggle('light');
+      let btn = document.querySelector('.toggle-mode');
+      btn.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
     }
   </script>
 </body>
