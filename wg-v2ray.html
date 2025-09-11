@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WireGuard for V2Ray - Academi VPN</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background 0.5s, color 0.5s;
+      background: #0a0a0a;
+      color: #fff;
+    }
+    body.light {
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    header {
+      padding: 15px 30px;
+      background: rgba(0, 0, 0, 0.8);
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    header h1 {
+      font-size: 22px;
+      color: #00ccff;
+      margin: 0;
+      animation: glow 2s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #00ccff; }
+      to { text-shadow: 0 0 25px #ff00ff; }
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: rgba(0,0,0,0.8);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,200,255,0.3);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, button, textarea {
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-family: monospace;
+    }
+    input, textarea {
+      background: #111;
+      color: #eee;
+      border: 1px solid #333;
+    }
+    button {
+      background: #00ccff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #ff00ff;
+      color: #fff;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+    }
+    .footer a {
+      color: #00ccff;
+      text-decoration: none;
+      margin: 0 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔹 WireGuard برای V2Ray</h1>
+  </header>
+
+  <div class="container">
+    <label>نام کانفیگ:</label>
+    <input type="text" id="wgV2Name" placeholder="مثلاً v2ray">
+
+    <button onclick="generateWGV2()">ساخت کانفیگ V2Ray</button>
+    <textarea id="wgV2Config" rows="16" readonly></textarea>
+    <button onclick="copyWGV2()">📋 کپی کانفیگ</button>
+  </div>
+
+  <div class="footer">
+    <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a> | 
+    <a href="https://t.me/MahdiAGM0">Admin By : @MahdiAGM0</a>
+  </div>
+
+  <script>
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function randomIPv4() {
+      return `${rand(1,255)}.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}`;
+    }
+    function uint8ArrayToBase64(bytes) {
+      let binary = '';
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+
+    function generateWGV2() {
+      const secretKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
+      const publicKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
+      const endpoint = `${randomIPv4()}:${rand(10000, 65000)}`;
+      const dns = ["1.1.1.1", "8.8.8.8"];
+      const address = `10.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}/32`;
+
+      const nameInput = document.getElementById("wgV2Name").value.trim();
+      const config = {
+        "protocol": "wireguard",
+        "tag": `Academi-${nameInput || "v2ray"}`,
+        "settings": {
+          "secretKey": secretKey,
+          "peers": [
+            {
+              "publicKey": publicKey,
+              "endpoint": endpoint,
+              "allowedIPs": ["0.0.0.0/0", "::/0"]
+            }
+          ],
+          "address": [address],
+          "mtu": 1280,
+          "dns": dns
+        }
+      };
+
+      document.getElementById("wgV2Config").value = JSON.stringify(config, null, 2);
+    }
+
+    function copyWGV2() {
+      const text = document.getElementById("wgV2Config").value;
+      navigator.clipboard.writeText(text);
+      alert("کپی شد!");
+    }
+  </script>
+</body>
+</html>
