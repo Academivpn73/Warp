@@ -140,12 +140,7 @@
       <span class="toggle-mode" onclick="toggleMode()">🌙</span>
       <span class="hamburger" onclick="toggleMenu()">☰</span>
     </div>
-    <div class="dropdown-menu" id="dropdownMenu">
-      <a href="warp.html">🌐 Warp Generator</a>
-      <a href="wg.html">⚡ WireGuard Gaming</a>
-      <a href="wg-v2ray.html">🔹 WireGuard برای V2Ray</a>
-      <a href="telegram.html">📡 پروکسی تلگرام</a>
-    </div>
+    <div class="dropdown-menu" id="dropdownMenu"></div>
   </header>
 
   <div class="hero">
@@ -172,6 +167,22 @@
   </div>
 
   <script>
+    // منو داینامیک
+    const pages = {
+      "🌐 Warp Generator": "warp.html",
+      "⚡ WireGuard Gaming": "wg.html",
+      "🔹 WireGuard برای V2Ray": "wg-v2ray.html",
+      "📡 پروکسی تلگرام": "telegram.html"
+    };
+
+    const menu = document.getElementById("dropdownMenu");
+    for (const [title, link] of Object.entries(pages)) {
+      const a = document.createElement("a");
+      a.href = link;
+      a.textContent = title;
+      menu.appendChild(a);
+    }
+
     function toggleMenu() {
       const menu = document.getElementById('dropdownMenu');
       menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
