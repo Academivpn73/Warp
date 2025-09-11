@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WireGuard Gaming - Academi VPN</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background 0.5s, color 0.5s;
+      background: #0a0a0a;
+      color: #fff;
+    }
+    body.light {
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    header {
+      padding: 15px 30px;
+      background: rgba(0, 0, 0, 0.8);
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    header h1 {
+      font-size: 22px;
+      color: #ff00ff;
+      margin: 0;
+      animation: glow 2s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ff00ff; }
+      to { text-shadow: 0 0 25px #00ccff; }
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: rgba(0,0,0,0.8);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255,0,200,0.3);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, button, textarea {
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-family: monospace;
+    }
+    input, textarea {
+      background: #111;
+      color: #eee;
+      border: 1px solid #333;
+    }
+    button {
+      background: #ff00ff;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #00ccff;
+      color: #000;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+    }
+    .footer a {
+      color: #00ccff;
+      text-decoration: none;
+      margin: 0 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>⚡ WireGuard Gaming</h1>
+  </header>
+
+  <div class="container">
+    <label>نام کانفیگ:</label>
+    <input type="text" id="wgName" placeholder="مثلاً gaming">
+
+    <button onclick="generateWG()">ساخت کانفیگ</button>
+    <textarea id="wgConfig" rows="14" readonly></textarea>
+    <button onclick="copyWG()">📋 کپی کانفیگ</button>
+    <button onclick="downloadWG()">⬇️ دانلود کانفیگ</button>
+  </div>
+
+  <div class="footer">
+    <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a> | 
+    <a href="https://t.me/MahdiAGM0">Admin By : @MahdiAGM0</a>
+  </div>
+
+  <script>
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function randomIPv4() {
+      return `${rand(1,255)}.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}`;
+    }
+    function uint8ArrayToBase64(bytes) {
+      let binary = '';
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+
+    function generateWG() {
+      const privateKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
+      const publicKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
+      const presharedKey = uint8ArrayToBase64(crypto.getRandomValues(new Uint8Array(32)));
+      const mtu = rand(1280,1500);
+      const endpoint = `${randomIPv4()}:${rand(10000, 65000)}`;
+      const dns = ["10.202.10.10", randomIPv4()];
+
+      const nameInput = document.getElementById("wgName").value.trim();
+      const filename = `Academi-${nameInput || "wg"}.conf`;
+
+      const config = `[Interface]
+PrivateKey = ${privateKey}
+Address = ${randomIPv4()}/32
+DNS = ${dns.join(", ")}
+MTU = ${mtu}
+
+[Peer]
+PublicKey = ${publicKey}
+PresharedKey = ${presharedKey}
+Endpoint = ${endpoint}
+PersistentKeepalive = 25
+AllowedIPs = 0.0.0.0/0, ::/0`;
+
+      document.getElementById("wgConfig").value = config;
+      document.getElementById("wgConfig").setAttribute("data-filename", filename);
+    }
+
+    function copyWG() {
+      const text = document.getElementById("wgConfig").value;
+      navigator.clipboard.writeText(text);
+      alert("کپی شد!");
+    }
+
+    function downloadWG() {
+      const filename = document.getElementById("wgConfig").getAttribute("data-filename") || "Academi-wg.conf";
+      const content = document.getElementById("wgConfig").value;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
+  </script>
+</body>
+</html>
