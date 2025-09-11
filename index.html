@@ -193,6 +193,15 @@
       let btn = document.querySelector('.toggle-mode');
       btn.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
     }
+    <script>
+  function toggleMenu() {
+    var menu = document.getElementById("dropdownMenu");
+    if (menu.style.display === "flex") {
+      menu.style.display = "none";
+    } else {
+      menu.style.display = "flex";
+    }
+  }
   </script>
 </body>
 </html>
