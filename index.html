@@ -1,208 +1,104 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Academi VPN Panel</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      transition: background 0.5s, color 0.5s;
-      background: #0a0a0a;
-      color: #fff;
+    :root{
+      --bg:#0a0a0a; --panel:rgba(0,0,0,0.85);
+      --accent1:#00ccff; --accent2:#ff00ff; --header-h:68px;
     }
-    body.light {
-      background: #f5f5f5;
-      color: #222;
-    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;padding:0;font-family: 'Segoe UI', Tahoma, sans-serif;background:var(--bg);color:#fff;transition:background .35s,color .35s}
+    body.light{background:#f5f5f5;color:#222}
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 30px;
-      background: rgba(0, 0, 0, 0.8);
-      position: fixed;
-      width: 100%;
-      top: 0;
-      z-index: 1000;
-    }
-    header h1 {
-      font-size: 20px;
-      color: #ff00ff;
-      margin: 0;
-      animation: glow 2s infinite alternate;
-    }
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #ff00ff; }
-      to { text-shadow: 0 0 25px #00ccff; }
-    }
+    header{position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;justify-content:flex-start;padding:0 16px;background:var(--panel);z-index:1200;gap:12px}
+    .left-controls{display:flex;gap:10px;align-items:center;z-index:1210}
+    .hamburger{border:0;background:transparent;color:var(--accent1);font-size:22px;padding:8px 10px;border-radius:8px;cursor:pointer}
+    .toggle-mode{border:0;background:transparent;color:var(--accent1);font-size:20px;padding:6px 8px;border-radius:8px;cursor:pointer}
+    .logo-title{margin:0;flex:1;text-align:center;font-size:20px;color:var(--accent2);text-shadow:0 0 12px rgba(255,0,255,0.12);pointer-events:none}
 
-    /* دکمه همبرگری */
-    .hamburger {
-  font-size: 28px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 6px;
-  background: rgba(0,0,0,0.6);
-  color: #00ccff;
-  transition: background 0.3s;
-  position: relative; /* برای رفرنس بهتر */
-}
-    .hamburger:hover {
-      background: rgba(0,0,0,0.9);
-    }
+    .dropdown-menu{position:fixed;top:calc(var(--header-h) + 8px);left:16px;min-width:200px;background:rgba(18,18,18,0.98);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.6);overflow:hidden;transform-origin:top left;transform:translateY(-8px) scale(.98);opacity:0;visibility:hidden;transition:transform .22s ease,opacity .22s ease,visibility .22s;display:flex;flex-direction:column;z-index:1199}
+    .dropdown-menu.open{transform:translateY(0) scale(1);opacity:1;visibility:visible}
+    .dropdown-menu a{display:block;text-decoration:none;color:var(--accent1);padding:12px 16px;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.03)}
+    .dropdown-menu a:hover{background:var(--accent1);color:#000}
 
-    /* منوی کشویی */
-    ..dropdown-menu {
-  display: none;
-  flex-direction: column;
-  position: absolute;
-  top: 50px; /* فاصله از بالای دکمه */
-  right: 30px; /* چسبیدن به سمت راست */
-  background: rgba(20, 20, 20, 0.95);
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 15px rgba(0,0,0,0.5);
-  animation: slideDown 0.4s ease forwards;
-  min-width: 150px;
-    }
-    .dropdown-menu a {
-      color: #00ccff;
-      padding: 12px 20px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      transition: background 0.3s, color 0.3s;
-    }
-    .dropdown-menu a:hover {
-      background: #00ccff;
-      color: #000;
-    }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    main{padding-top:calc(var(--header-h) + 36px)}
+    .hero{text-align:center;margin-top:8px}
+    .hero img{width:200px;border-radius:18px;box-shadow:0 0 40px rgba(255,0,255,0.25);animation:pulse 3s infinite}
+    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05);box-shadow:0 0 48px rgba(0,204,255,0.18)}100%{transform:scale(1)}}
+    .hero h2{margin:20px 0 0;color:var(--accent1);font-size:28px}
 
-    /* بخش لوگو و معرفی */
-    .hero {
-      text-align: center;
-      padding-top: 120px;
-    }
-    .hero img {
-      width: 200px;
-      border-radius: 20px;
-      box-shadow: 0 0 30px #ff00ff;
-      animation: pulse 3s infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); box-shadow: 0 0 40px #00ccff; }
-      100% { transform: scale(1); }
-    }
-    .hero h2 {
-      margin-top: 20px;
-      font-size: 28px;
-      color: #00ccff;
-    }
+    .description{max-width:720px;margin:28px auto;text-align:center;font-size:18px;line-height:1.6}
+    .footer{text-align:center;margin:40px 0 60px}
+    .footer a{color:var(--accent1);text-decoration:none;margin:0 8px}
 
-    .description {
-      max-width: 700px;
-      margin: 30px auto;
-      text-align: center;
-      font-size: 18px;
-      line-height: 1.6;
-    }
-
-    .footer {
-      text-align: center;
-      margin: 40px 0 20px;
-      font-size: 16px;
-    }
-    .footer a {
-      color: #00ccff;
-      text-decoration: none;
-      margin: 0 5px;
-    }
-
-    .toggle-mode {
-      cursor: pointer;
-      font-size: 20px;
-      margin-left: 15px;
+    @media (max-width:480px){
+      .dropdown-menu{left:10px;min-width:170px}
+      .hero img{width:170px}
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Academi VPN</h1>
-    <div>
-      <span class="toggle-mode" onclick="toggleMode()">🌙</span>
-      <span class="hamburger" onclick="toggleMenu()">☰</span>
+    <div class="left-controls">
+      <button class="hamburger" id="hambBtn">☰</button>
+      <button class="toggle-mode" id="themeToggle">🌙</button>
     </div>
-    <div class="dropdown-menu" id="dropdownMenu"></div>
+    <h1 class="logo-title">Academi VPN</h1>
   </header>
 
-  <div class="hero">
-    <img src="logo.jpg" alt="Academi VPN Logo">
-    <h2>به پنل Academi VPN خوش آمدید</h2>
-  </div>
+  <nav class="dropdown-menu" id="dropdownMenu" aria-hidden="true">
+    <a href="warp.html">🌐 Warp Generator</a>
+    <a href="wg.html">⚡ WireGuard Gaming</a>
+    <a href="wg-v2ray.html">🔹 WireGuard برای V2Ray</a>
+    <a href="telegram.html">📡 پروکسی تلگرام</a>
+  </nav>
 
-  <div class="description">
-    <p>
-      این وبسایت شامل ابزارهای مختلف برای تولید کانفیگ‌ها و سرورها است.<br>
-      شما می‌توانید از طریق منوی بالا، بخش مورد نظر خود را انتخاب کنید:
-    </p>
-    <ul style="list-style:none; padding:0;">
-      <li>🌐 تولید آی‌پی و کانفیگ Warp</li>
-      <li>⚡ ساخت کانفیگ WireGuard Gaming</li>
-      <li>🔹 خروجی WireGuard برای V2Ray</li>
-      <li>📡 ساخت پروکسی تلگرام</li>
-    </ul>
-  </div>
+  <main>
+    <section class="hero">
+      <img src="logo.jpg" alt="Academi VPN Logo">
+      <h2>به پنل Academi VPN خوش آمدید</h2>
+    </section>
 
-  <div class="footer">
-    <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a> | 
-    <a href="https://t.me/MahdiAGM0">Admin By : @MahdiAGM0</a>
-  </div>
+    <section class="description">
+      <p>این وبسایت شامل ابزارهای مختلف برای تولید کانفیگ‌ها و سرورها است. از منوی بالا (آیکون سه خط سمت چپ) بخش مورد نظر را انتخاب کنید.</p>
+      <ul style="list-style:none;padding:0;margin-top:18px">
+        <li>🌐 تولید آی‌پی و کانفیگ Warp</li>
+        <li>⚡ ساخت کانفیگ WireGuard Gaming</li>
+        <li>🔹 خروجی WireGuard برای V2Ray</li>
+        <li>📡 ساخت و مشاهده پروکسی‌های تلگرام</li>
+      </ul>
+    </section>
+
+    <section class="footer">
+      <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a> |
+      <a href="https://t.me/MahdiAGM0">Admin By : @MahdiAGM0</a>
+    </section>
+  </main>
 
   <script>
-    // منو داینامیک
-    const pages = {
-      "🌐 Warp Generator": "warp.html",
-      "⚡ WireGuard Gaming": "wg.html",
-      "🔹 WireGuard برای V2Ray": "wg-v2ray.html",
-      "📡 پروکسی تلگرام": "telegram.html"
-    };
+    // menu
+    const hamb = document.getElementById('hambBtn');
+    const menu = document.getElementById('dropdownMenu');
+    hamb.addEventListener('click', ()=> {
+      menu.classList.toggle('open');
+      menu.setAttribute('aria-hidden', menu.classList.contains('open') ? 'false' : 'true');
+    });
+    document.addEventListener('click', (e)=>{
+      const path = e.composedPath();
+      if(!path.includes(menu) && e.target !== hamb && menu.classList.contains('open')){
+        menu.classList.remove('open'); menu.setAttribute('aria-hidden','true');
+      }
+    });
 
-    const menu = document.getElementById("dropdownMenu");
-    for (const [title, link] of Object.entries(pages)) {
-      const a = document.createElement("a");
-      a.href = link;
-      a.textContent = title;
-      menu.appendChild(a);
-    }
-
-    function toggleMenu() {
-      const menu = document.getElementById('dropdownMenu');
-      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
-    }
-    function toggleMode() {
+    // theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
       document.body.classList.toggle('light');
-      let btn = document.querySelector('.toggle-mode');
-      btn.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
-    }
-    <script>
-  function toggleMenu() {
-    var menu = document.getElementById("dropdownMenu");
-    if (menu.style.display === "flex") {
-      menu.style.display = "none";
-    } else {
-      menu.style.display = "flex";
-    }
-  }
+      themeToggle.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+    });
   </script>
 </body>
 </html>
