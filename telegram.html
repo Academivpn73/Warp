@@ -1,163 +1,136 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Telegram Proxy - Academi VPN</title>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>پروکسی تلگرام - Academi VPN</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      transition: background 0.5s, color 0.5s;
-      background: #0a0a0a;
-      color: #fff;
-    }
-    body.light {
-      background: #f5f5f5;
-      color: #222;
-    }
-
-    header {
-      padding: 15px 30px;
-      background: rgba(0, 0, 0, 0.8);
-      text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    header h1 {
-      font-size: 22px;
-      color: #ffcc00;
-      margin: 0;
-      animation: glow 2s infinite alternate;
-    }
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #ffcc00; }
-      to { text-shadow: 0 0 25px #ff00ff; }
-    }
-
-    .container {
-      max-width: 700px;
-      margin: 40px auto;
-      background: rgba(0,0,0,0.8);
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(255,200,0,0.3);
-    }
-
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    input, button, textarea {
-      width: 100%;
-      margin: 8px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      font-family: monospace;
-    }
-    input, textarea {
-      background: #111;
-      color: #eee;
-      border: 1px solid #333;
-    }
-    button {
-      background: #ffcc00;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #ff00ff;
-      color: #fff;
-    }
-
-    pre {
-      background: #111;
-      padding: 12px;
-      border-radius: 6px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: #eee;
-      margin-top: 15px;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 25px;
-    }
-    .footer a {
-      color: #00ccff;
-      text-decoration: none;
-      margin: 0 5px;
-    }
+    :root{--bg:#0a0a0a;--panel:rgba(0,0,0,0.85);--accent:#00ccff;--accent2:#ffcc00}
+    *{box-sizing:border-box} body{margin:0;padding:0;font-family:Tahoma,Segoe UI;background:var(--bg);color:#fff;transition:background .3s,color .3s} body.light{background:#f5f5f5;color:#222}
+    header{position:fixed;top:0;left:0;right:0;height:68px;background:var(--panel);display:flex;align-items:center;padding:0 16px;z-index:1200}
+    header .left-controls{display:flex;gap:10px;align-items:center}
+    header h1{flex:1;text-align:center;color:var(--accent2);margin:0}
+    main{padding-top:110px;padding-left:16px;padding-right:16px;max-width:980px;margin:0 auto}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+    .controls input[type=number]{width:120px;padding:8px;border-radius:8px;border:0;background:#111;color:#fff}
+    .controls button{padding:9px 12px;border-radius:8px;border:0;background:var(--accent);color:#000;cursor:pointer;font-weight:700}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.25));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);position:relative;transition:transform .18s}
+    .card:hover{transform:translateY(-6px)}
+    .title{font-weight:800;color:var(--accent);margin-bottom:8px}
+    .meta{font-size:13px;color:#bbb;margin-bottom:10px}
+    .link{word-break:break-all;color:#fff;background:#111;padding:8px;border-radius:8px}
+    .actions{display:flex;gap:8px;margin-top:10px}
+    .btn-small{padding:8px 10px;border-radius:8px;border:0;cursor:pointer}
+    .copy{background:#00cc88;color:#000;font-weight:700}
+    .open{background:#ffb400;color:#000;font-weight:700}
+    .ping{position:absolute;top:12px;left:12px;background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;font-weight:700;color:#ddd}
+    .note{margin:18px 0;color:#aaa;font-size:14px}
+    footer{margin:30px 0;text-align:center;color:#aaa}
+    footer a{color:var(--accent);text-decoration:none}
   </style>
 </head>
 <body>
   <header>
+    <div class="left-controls">
+      <button id="hambBtn" style="border:0;background:transparent;color:var(--accent);font-size:22px">☰</button>
+      <button id="themeToggle" style="border:0;background:transparent;color:var(--accent);font-size:20px">🌙</button>
+    </div>
     <h1>📡 پروکسی تلگرام</h1>
   </header>
 
-  <div class="container">
-    <label>تعداد پروکسی:</label>
-    <input type="number" id="proxyCount" placeholder="مثلاً 5" min="1" max="50">
+  <main>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="controls">
+        <input id="proxyCount" type="number" min="1" max="200" placeholder="مثلاً 10" />
+        <button id="genBtn">⚡ تولید محلی (فیک)</button>
+        <button id="loadBtn">📡 بارگذاری از Proxy.txt</button>
+      </div>
+      <div style="text-align:left">
+        <small style="color:#bbb">اگر خواستی پراکسی‌های واقعی داشته باشی، فایل <b>Proxy.txt</b> را در ریشهٔ ریپو قرار بده.</small>
+      </div>
+    </div>
 
-    <button onclick="generateProxies()">ساخت پروکسی‌ها</button>
-    <pre id="proxyOutput"></pre>
-    <button onclick="copyProxies()">📋 کپی پروکسی‌ها</button>
-    <button onclick="downloadProxies()">⬇️ دانلود TXT</button>
-  </div>
+    <div class="note">پینگ‌ها به‌صورت فیک بین 110ms تا 250ms ساخته می‌شوند.</div>
 
-  <div class="footer">
-    <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a> | 
-    <a href="https://t.me/MahdiAGM0">Admin By : @MahdiAGM0</a>
-  </div>
+    <div id="grid" class="grid"></div>
 
-  <script>
-    function rand(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+    <footer>
+      <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a> |
+      <a href="https://t.me/MahdiAGM0">Admin By: @MahdiAGM0</a>
+    </footer>
+  </main>
+
+<script>
+  // theme
+  const themeBtn = document.getElementById('themeToggle');
+  themeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    themeBtn.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+  });
+
+  // helpers
+  function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+  function randIP(){return `${rand(1,255)}.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}`}
+  function randPort(){return rand(1000,65000)}
+  function randSecret(){const hex='0123456789abcdef'; let s='ee'; for(let i=0;i<32;i++) s+=hex[rand(0,15)]; return s}
+
+  function makeCard(obj, idx){
+    const div = document.createElement('div'); div.className='card';
+    // پینگ فیک
+    const fakePing = Math.floor(Math.random() * 140) + 110;
+    const pingEl = document.createElement('div'); pingEl.className='ping'; pingEl.textContent = `Ping: ${fakePing} ms`;
+    div.appendChild(pingEl);
+
+    const t = document.createElement('div'); t.className='title'; t.textContent = obj.comment || `${obj.server}:${obj.port}`;
+    const m = document.createElement('div'); m.className='meta'; m.textContent = `${(obj.type||'mtproto').toUpperCase()} • ${obj.server}:${obj.port}`;
+    const linkPre = document.createElement('pre'); linkPre.className='link';
+    let link = `tg://proxy?server=${obj.server}&port=${obj.port}&secret=${obj.secret}`;
+    linkPre.textContent = link;
+    const actions = document.createElement('div'); actions.className='actions';
+    const copyBtn = document.createElement('button'); copyBtn.className='btn-small copy'; copyBtn.textContent='کپی';
+    const openBtn = document.createElement('button'); openBtn.className='btn-small open'; openBtn.textContent='باز کردن';
+    copyBtn.addEventListener('click', ()=> { navigator.clipboard.writeText(link).then(()=> alert('کپی شد!')); });
+    openBtn.addEventListener('click', ()=> { window.location.href = link; });
+    actions.appendChild(copyBtn); actions.appendChild(openBtn);
+    div.appendChild(t); div.appendChild(m); div.appendChild(linkPre); div.appendChild(actions);
+    return div;
+  }
+
+  function renderList(list){
+    const grid = document.getElementById('grid'); grid.innerHTML='';
+    list.forEach((p, i)=> grid.appendChild(makeCard(p,i)));
+  }
+
+  // generate local placeholders
+  document.getElementById('genBtn').addEventListener('click', ()=>{
+    const n = parseInt(document.getElementById('proxyCount').value) || 6;
+    const arr = [];
+    for(let i=0;i<n;i++){
+      arr.push({type:'mtproto', server:randIP(), port:randPort(), secret:randSecret(), comment:`Academi Proxy ${i+1}`});
     }
-    function randomIPv4() {
-      return `${rand(1,255)}.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}`;
-    }
-    function randomSecret() {
-      const hex = "0123456789abcdef";
-      let s = "ee";
-      for (let i=0; i<32; i++) s += hex[rand(0,15)];
-      return s;
-    }
+    renderList(arr);
+  });
 
-    function generateProxies() {
-      const count = parseInt(document.getElementById("proxyCount").value);
-      let out = "";
-      for (let i=1; i<=count; i++) {
-        const ip = randomIPv4();
-        const port = rand(1000,65000);
-        const secret = randomSecret();
-        const link = `tg://proxy?server=${ip}&port=${port}&secret=${secret}`;
-        out += link + "\n";
+  // load from Proxy.txt
+  document.getElementById('loadBtn').addEventListener('click', async ()=>{
+    try{
+      const res = await fetch('/Proxy.txt', {cache:'no-store'});
+      if(!res.ok) throw new Error('فایل Proxy.txt یافت نشد یا دسترسی نیست');
+      const txt = await res.text();
+      const lines = txt.split(/\r?\n/).map(l=>l.trim()).filter(l=>l && !l.startsWith('//') && !l.startsWith('#'));
+      const list = [];
+      for(const ln of lines){
+        const sp = ln.split('|');
+        if(sp.length>=4){
+          list.push({type:sp[0], server:sp[1], port:sp[2], secret:sp[3], comment:sp[4]||`${sp[1]}:${sp[2]}`});
+        }
       }
-      document.getElementById("proxyOutput").textContent = out;
+      if(list.length===0) alert('فایلی پیدا شد ولی هیچ پراکسی معتبر نداشت.');
+      renderList(list);
+    }catch(err){
+      alert('خطا: ' + err.message);
     }
-
-    function copyProxies() {
-      let text = document.getElementById("proxyOutput").textContent;
-      navigator.clipboard.writeText(text);
-      alert("کپی شد!");
-    }
-
-    function downloadProxies() {
-      let text = document.getElementById("proxyOutput").textContent;
-      const blob = new Blob([text], { type: 'text/plain' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = "telegram-proxies.txt";
-      a.click();
-    }
-  </script>
+  });
+</script>
 </body>
 </html>
