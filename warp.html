@@ -1,178 +1,101 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Warp Generator - Academi VPN</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      transition: background 0.5s, color 0.5s;
-      background: #0a0a0a;
-      color: #fff;
-    }
-    body.light {
-      background: #f5f5f5;
-      color: #222;
-    }
-
-    header {
-      padding: 15px 30px;
-      background: rgba(0, 0, 0, 0.8);
-      text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    header h1 {
-      font-size: 22px;
-      color: #00ccff;
-      margin: 0;
-      animation: glow 2s infinite alternate;
-    }
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #00ccff; }
-      to { text-shadow: 0 0 25px #ff00ff; }
-    }
-
-    .container {
-      max-width: 700px;
-      margin: 40px auto;
-      background: rgba(0,0,0,0.8);
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,255,200,0.3);
-    }
-
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    input, select, button, textarea {
-      width: 100%;
-      margin: 8px 0;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      font-family: monospace;
-    }
-    input, select, textarea {
-      background: #111;
-      color: #eee;
-      border: 1px solid #333;
-    }
-    button {
-      background: #00ccff;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #ff00ff;
-      color: #fff;
-    }
-
-    pre {
-      background: #111;
-      padding: 12px;
-      border-radius: 6px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: #eee;
-      margin-top: 15px;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 25px;
-    }
-    .footer a {
-      color: #00ccff;
-      text-decoration: none;
-      margin: 0 5px;
-    }
+    :root{--bg:#0a0a0a;--panel:rgba(0,0,0,0.85);--accent:#00ccff;--header-h:68px}
+    *{box-sizing:border-box} body{margin:0;padding:0;font-family:Segoe UI;background:var(--bg);color:#fff;transition:background .3s,color .3s} body.light{background:#f5f5f5;color:#222}
+    header{position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;justify-content:flex-start;padding:0 16px;background:var(--panel);z-index:1200}
+    .left-controls{display:flex;gap:10px;align-items:center}
+    .hamburger{border:0;background:transparent;color:var(--accent);font-size:22px;padding:8px 10px;border-radius:8px;cursor:pointer}
+    .toggle-mode{border:0;background:transparent;color:var(--accent);font-size:20px;padding:6px 8px;border-radius:8px;cursor:pointer}
+    .logo-title{margin:0;flex:1;text-align:center;font-size:18px;color:#ff00ff}
+    .dropdown-menu{position:fixed;top:76px;left:16px;min-width:200px;background:rgba(18,18,18,0.98);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.6);overflow:hidden;transform-origin:top left;transform:translateY(-8px) scale(.98);opacity:0;visibility:hidden;transition:transform .22s ease,opacity .22s ease,visibility .22s;display:flex;flex-direction:column;z-index:1199}
+    .dropdown-menu.open{transform:translateY(0) scale(1);opacity:1;visibility:visible}
+    .dropdown-menu a{display:block;padding:12px 16px;color:var(--accent);text-decoration:none;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.03)}
+    main{padding-top:calc(var(--header-h) + 30px);max-width:720px;margin:0 auto;padding-left:16px;padding-right:16px}
+    .panel{background:var(--panel);padding:18px;border-radius:12px;margin-top:18px}
+    label{display:block;margin-top:12px;font-weight:700}
+    input,select,button,pre{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:0;background:#111;color:#fff;font-family:monospace}
+    button{background:var(--accent);color:#000;font-weight:700;cursor:pointer}
+    button:hover{opacity:.9}
+    pre{white-space:pre-wrap;word-break:break-word}
+    footer{text-align:center;margin:30px 0;color:#aaa}
+    footer a{color:var(--accent);text-decoration:none}
   </style>
 </head>
 <body>
   <header>
-    <h1>🌐 Warp Generator</h1>
+    <div class="left-controls">
+      <button class="hamburger" id="hambBtn">☰</button>
+      <button class="toggle-mode" id="themeToggle">🌙</button>
+    </div>
+    <h1 class="logo-title">Warp Generator</h1>
   </header>
 
-  <div class="container">
-    <label>تعداد خروجی:</label>
-    <input type="number" id="count" placeholder="مثلاً 10" min="1" max="100">
+  <nav class="dropdown-menu" id="dropdownMenu">
+    <a href="index.html">🏠 صفحه اصلی</a>
+    <a href="wg.html">⚡ WireGuard Gaming</a>
+    <a href="wg-v2ray.html">🔹 WireGuard برای V2Ray</a>
+    <a href="telegram.html">📡 پروکسی تلگرام</a>
+  </nav>
 
-    <label>نوع آی‌پی:</label>
-    <select id="ipType">
-      <option value="ipv4">IPv4</option>
-      <option value="ipv6">IPv6</option>
-    </select>
+  <main>
+    <div class="panel">
+      <label>تعداد خروجی:</label>
+      <input id="count" type="number" min="1" max="200" placeholder="مثلا 10">
+      <label>نسخه آی‌پی:</label>
+      <select id="ipType"><option value="ipv4">IPv4</option><option value="ipv6">IPv6</option></select>
+      <label>نوع خروجی:</label>
+      <select id="outputType"><option value="ip">فقط IP:Port</option><option value="warp">کانفیگ warp://</option></select>
+      <button id="genBtn">⚡ ساخت خروجی</button>
+      <pre id="out" style="min-height:120px;margin-top:12px"></pre>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button id="copyBtn">📋 کپی</button>
+        <button id="downloadBtn">⬇️ دانلود TXT</button>
+      </div>
+    </div>
 
-    <label>نوع خروجی:</label>
-    <select id="outputType">
-      <option value="ip">فقط IP:Port</option>
-      <option value="warp">کانفیگ warp://</option>
-    </select>
+    <footer>
+      <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a> |
+      <a href="https://t.me/MahdiAGM0">Admin By : @MahdiAGM0</a>
+    </footer>
+  </main>
 
-    <button onclick="generateWarp()">ساخت خروجی WARP</button>
-    <pre id="warpOutput"></pre>
-    <button onclick="copyWarp()">📋 کپی خروجی‌ها</button>
-    <button onclick="downloadWarp()">⬇️ دانلود TXT</button>
-  </div>
+<script>
+  // menu + theme (shared)
+  const hamb = document.getElementById('hambBtn'), menu = document.getElementById('dropdownMenu');
+  hamb.addEventListener('click', ()=> menu.classList.toggle('open'));
+  document.addEventListener('click', (e)=> { if(!e.composedPath().includes(menu) && e.target !== hamb && menu.classList.contains('open')) menu.classList.remove('open')});
+  const themeToggle = document.getElementById('themeToggle'); themeToggle.addEventListener('click', ()=> { document.body.classList.toggle('light'); themeToggle.textContent = document.body.classList.contains('light') ? '☀️' : '🌙'; });
 
-  <div class="footer">
-    <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a> | 
-    <a href="https://t.me/MahdiAGM0">Admin By : @MahdiAGM0</a>
-  </div>
+  // generator
+  function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+  function randomIPv4(){return `${rand(1,255)}.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}`}
+  function randomIPv6(){let blocks=[];for(let i=0;i<8;i++)blocks.push(Math.floor(Math.random()*0xFFFF).toString(16));return blocks.join(":")}
 
-  <script>
-    function rand(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+  document.getElementById('genBtn').addEventListener('click', ()=>{
+    const count = parseInt(document.getElementById('count').value) || 1;
+    const type = document.getElementById('ipType').value;
+    const outType = document.getElementById('outputType').value;
+    let out = '';
+    for(let i=1;i<=count;i++){
+      const ip = (type==='ipv4')? randomIPv4(): randomIPv6();
+      const port = rand(1000,65000);
+      if(outType==='ip') out += `${ip}:${port}\n`; else out += `warp://${ip}:${port}?ifp=40-80&ifps=40-100&ifpd=4-8&ifpm=m4#Telegram:@Academi_vpn${i}\n`;
     }
-    function randomIPv4() {
-      return `${rand(1,255)}.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}`;
-    }
-    function randomIPv6() {
-      let blocks = [];
-      for (let i=0; i<8; i++) blocks.push(Math.floor(Math.random()*0xFFFF).toString(16));
-      return blocks.join(":");
-    }
+    document.getElementById('out').textContent = out;
+  });
 
-    function generateWarp() {
-      let count = parseInt(document.getElementById("count").value);
-      let type = document.getElementById("ipType").value;
-      let oType = document.getElementById("outputType").value;
-      let out = "";
-      for (let i=1; i<=count; i++) {
-        let ip = (type === "ipv4") ? randomIPv4() : randomIPv6();
-        let port = rand(1000, 65000);
-        if (oType === "ip") {
-          out += `${ip}:${port}\n`;
-        } else {
-          out += `warp://${ip}:${port}?ifp=40-80&ifps=40-100&ifpd=4-8&ifpm=m4#Telegram:@Academi_vpn${i}\n`;
-        }
-      }
-      document.getElementById("warpOutput").textContent = out;
-    }
-
-    function copyWarp() {
-      let text = document.getElementById("warpOutput").textContent;
-      navigator.clipboard.writeText(text);
-      alert("کپی شد!");
-    }
-
-    function downloadWarp() {
-      let text = document.getElementById("warpOutput").textContent;
-      const blob = new Blob([text], { type: 'text/plain' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = "warp-servers.txt";
-      a.click();
-    }
-  </script>
+  document.getElementById('copyBtn').addEventListener('click', ()=> {
+    const text = document.getElementById('out').textContent;
+    navigator.clipboard.writeText(text).then(()=>alert('کپی شد!'));
+  });
+  document.getElementById('downloadBtn').addEventListener('click', ()=> {
+    const text = document.getElementById('out').textContent;
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text],{type:'text/plain'})); a.download='warp-servers.txt'; a.click();
+  });
+</script>
 </body>
 </html>
