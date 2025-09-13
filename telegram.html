@@ -185,12 +185,13 @@
   <div class="menu-toggle" id="menuToggle">☰</div>
   <div class="menu-overlay" id="menuOverlay"></div>
   <div class="menu" id="sideMenu">
-    <a href="index.html">🏠 صفحه اصلی</a>
-    <a href="Warp.html">🌐 تولید آی‌پی و کانفیگ Warp</a>
-    <a href="WireGuard.html">⚡ ساخت کانفیگ WireGuard Gaming</a>
-    <a href="WireGuardToV2ray.html">📉 خروجی WireGuard برای V2Ray</a>
-    <a href="telegram.html">📡 پروکسی‌های تلگرام</a>
-  </div>
+  <div class="menu" id="sideMenu">
+  <a href="https://academivpn73.github.io/Warp/index.html">🏠 صفحه اصلی</a>
+  <a href="https://academivpn73.github.io/Warp/warp.html">🌐 تولید آی‌پی و کانفیگ Warp</a>
+  <a href="https://academivpn73.github.io/Warp/wg.html">⚡ ساخت کانفیگ WireGuard Gaming</a>
+  <a href="https://academivpn73.github.io/Warp/wg-v2ray.html">📉 خروجی WireGuard برای V2Ray</a>
+  <a href="https://academivpn73.github.io/Warp/telegram.html">📡 پروکسی‌های تلگرام</a>
+</div>
 
   <div class="proxy-container" id="proxyContainer">
     <h2>📡 پروکسی‌های فعال تلگرام</h2>
@@ -242,7 +243,7 @@
   // دریافت پروکسی‌ها
   const proxyList = document.getElementById("proxyList");
   const proxyContainer = document.getElementById("proxyContainer");
-  const proxyURL = "https://raw.githubusercontent.com/Academyimjv3/Warp/main/Proxy.txt";
+  const proxyURL = "https://raw.githubusercontent.com/Academivpn73/Warp/main/Proxy.txt";
   const proxyData = [];
 
   fetch(proxyURL)
