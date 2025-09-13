@@ -2,8 +2,8 @@ name: آپدیت لیست پروکسی‌ها
 
 on:
   schedule:
-    - cron: '0 */3 * * *'  # هر ۳ ساعت یک‌بار
-  workflow_dispatch:       # اجرای دستی هم فعال باشه
+    - cron: '0 */3 * * *'  # هر ۳ ساعت
+  workflow_dispatch:
 
 jobs:
   update:
@@ -28,5 +28,5 @@ jobs:
         git config --global user.name "amir-bot"
         git config --global user.email "amir@example.com"
         git add Proxy.txt
-        git commit -m "🔄 آپدیت خودکار لیست پروکسی‌ها"
-        git push
+        git commit -m "🔄 آپدیت خودکار پروکسی‌ها"
+        git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/Academivpn73/Warp.git
