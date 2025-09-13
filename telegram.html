@@ -2,39 +2,122 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
-  <title>لیست پروکسی‌های تلگرام</title>
-  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iransans-font@latest/dist/font-face.css" rel="stylesheet" type="text/css" />
+  <title>پروکسی یاب تلگرام</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iransans-font@latest/dist/font-face.css" rel="stylesheet" />
   <style>
     body {
       font-family: 'IranSans', sans-serif;
-      background: linear-gradient(to right, #e0f7fa, #fce4ec);
-      padding: 30px;
+      margin: 0;
+      padding: 0;
       direction: rtl;
+      background: linear-gradient(to right, #e0f7fa, #fce4ec);
+      transition: background 0.5s ease;
+    }
+
+    body.dark {
+      background: #121212;
+      color: #eee;
+    }
+
+    header {
+      background-color: #0077c2;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 1000;
+    }
+
+    body.dark .theme-toggle {
+      background: #333;
+      color: #fff;
+    }
+
+    .menu-toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 1000;
+    }
+
+    body.dark .menu-toggle {
+      background: #333;
+      color: #fff;
+    }
+
+    .menu {
+      position: fixed;
+      top: 0;
+      right: -250px;
+      width: 250px;
+      height: 100%;
+      background: #fff;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+      transition: right 0.3s ease;
+      padding: 20px;
+      z-index: 999;
+    }
+
+    body.dark .menu {
+      background: #222;
+      color: #fff;
+    }
+
+    .menu.open {
+      right: 0;
+    }
+
+    .menu a {
+      display: block;
+      margin-bottom: 15px;
+      text-decoration: none;
+      color: inherit;
+      font-weight: bold;
     }
 
     h1 {
       text-align: center;
-      color: #444;
-      margin-bottom: 30px;
-      font-size: 2rem;
+      margin: 30px 0 10px;
     }
 
     #proxy-list {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
       max-width: 800px;
       margin: auto;
+      padding: 20px;
     }
-
     .proxy-card {
-      background-color: #ffffff;
+      background: #fff;
       border-radius: 12px;
       padding: 20px;
+      margin-bottom: 20px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
       animation: fadeInUp 0.6s ease forwards;
       opacity: 0;
       transform: translateY(20px);
+    }
+
+    body.dark .proxy-card {
+      background: #1e1e1e;
+      color: #eee;
     }
 
     @keyframes fadeInUp {
@@ -48,10 +131,13 @@
       color: #0077c2;
       text-decoration: none;
       font-weight: bold;
-      font-size: 1.1rem;
       word-break: break-word;
       margin-bottom: 10px;
       display: block;
+    }
+
+    body.dark .proxy-link {
+      color: #80d8ff;
     }
 
     .ping {
@@ -60,9 +146,14 @@
       margin-bottom: 10px;
     }
 
+    body.dark .ping {
+      color: #ccc;
+    }
+
     .buttons {
       display: flex;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     button {
@@ -79,31 +170,52 @@
       color: #000;
     }
 
-    .copy-btn:hover {
-      background-color: #ffc107;
-    }
-
     .connect-btn {
       background-color: #26a69a;
       color: #fff;
     }
 
-    .connect-btn:hover {
-      background-color: #00897b;
+    .test-btn {
+      background-color: #5c6bc0;
+      color: #fff;
     }
 
-    @media (max-width: 600px) {
-      .buttons {
-        flex-direction: column;
-      }
+    body.dark .copy-btn {
+      background-color: #ffb300;
+    }
+
+    body.dark .connect-btn {
+      background-color: #009688;
+    }
+
+    body.dark .test-btn {
+      background-color: #3f51b5;
     }
   </style>
 </head>
 <body>
-  <h1>لیست پروکسی‌های تلگرام</h1>
+  <button class="theme-toggle" onclick="toggleTheme()">🌓 حالت</button>
+  <button class="menu-toggle" onclick="toggleMenu()">☰ منو</button>
+
+  <div class="menu" id="sideMenu">
+    <a href="#">خانه</a>
+    <a href="#">پروکسی‌ها</a>
+    <a href="#">ارتباط با ما</a>
+  </div>
+
+  <header>Telegram: @Academi_vpn | Admin By : @MahdiAGM0</header>
+  <h1>پروکسی‌های تلگرام</h1>
   <div id="proxy-list"></div>
 
   <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark');
+    }
+
+    function toggleMenu() {
+      document.getElementById('sideMenu').classList.toggle('open');
+    }
+
     fetch('Proxy.txt')
       .then(response => response.text())
       .then(data => {
@@ -127,7 +239,6 @@
           pingText.className = 'ping';
           pingText.textContent = 'در حال بررسی پینگ...';
 
-          // تست پینگ تقریبی با fetch
           const pingStart = performance.now();
           fetch(`https://${server}`, { mode: 'no-cors' })
             .then(() => {
@@ -152,8 +263,14 @@
           connectBtn.textContent = 'اتصال';
           connectBtn.onclick = () => window.location.href = proxy;
 
+          const testBtn = document.createElement('button');
+          testBtn.className = 'test-btn';
+          testBtn.textContent = 'تست';
+          testBtn.onclick = () => alert('پینگ فعلی: ' + pingText.textContent);
+
           buttons.appendChild(copyBtn);
           buttons.appendChild(connectBtn);
+          buttons.appendChild(testBtn);
 
           card.appendChild(link);
           card.appendChild(pingText);
