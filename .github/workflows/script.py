@@ -1,12 +1,19 @@
 import requests
 from urllib.parse import urlparse, parse_qs
 
-# لیست اولیه پروکسی‌ها (می‌تونی بعداً از منابع آنلاین بگیری)
-proxy_links = [
-    "tg://proxy?server=google.com&port=443&secret=abcdef123456",
-    "tg://proxy?server=cloudflare.com&port=443&secret=abcdef123456",
-    # ادامه بده...
-]
+# منبع واقعی پروکسی‌ها (فایل عمومی روی GitHub)
+SOURCE_URL = "https://raw.githubusercontent.com/TelegramProxies/proxy-list/main/proxies.txt"
+
+# دریافت لیست پروکسی‌ها
+try:
+    response = requests.get(SOURCE_URL, timeout=10)
+    raw_data = response.text.strip().splitlines()
+except Exception as e:
+    print("❌ خطا در دریافت لیست:", e)
+    raw_data = []
+
+# فیلتر فقط لینک‌های tg://proxy
+proxy_links = [line for line in raw_data if line.startswith("tg://proxy?")]
 
 valid_proxies = []
 
@@ -19,10 +26,12 @@ def test_proxy(link):
     except:
         return False
 
+# تست پروکسی‌ها
 for proxy in proxy_links:
     if test_proxy(proxy):
         valid_proxies.append(proxy)
 
+# ذخیره در فایل
 with open("Proxy.txt", "w") as f:
     for proxy in valid_proxies:
         f.write(proxy + "\n")
