@@ -1,136 +1,166 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>پروکسی تلگرام - Academi VPN</title>
+  <meta charset="UTF-8">
+  <title>لیست پروکسی‌های تلگرام</title>
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iransans-font@latest/dist/font-face.css" rel="stylesheet" type="text/css" />
   <style>
-    :root{--bg:#0a0a0a;--panel:rgba(0,0,0,0.85);--accent:#00ccff;--accent2:#ffcc00}
-    *{box-sizing:border-box} body{margin:0;padding:0;font-family:Tahoma,Segoe UI;background:var(--bg);color:#fff;transition:background .3s,color .3s} body.light{background:#f5f5f5;color:#222}
-    header{position:fixed;top:0;left:0;right:0;height:68px;background:var(--panel);display:flex;align-items:center;padding:0 16px;z-index:1200}
-    header .left-controls{display:flex;gap:10px;align-items:center}
-    header h1{flex:1;text-align:center;color:var(--accent2);margin:0}
-    main{padding-top:110px;padding-left:16px;padding-right:16px;max-width:980px;margin:0 auto}
-    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
-    .controls input[type=number]{width:120px;padding:8px;border-radius:8px;border:0;background:#111;color:#fff}
-    .controls button{padding:9px 12px;border-radius:8px;border:0;background:var(--accent);color:#000;cursor:pointer;font-weight:700}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.25));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);position:relative;transition:transform .18s}
-    .card:hover{transform:translateY(-6px)}
-    .title{font-weight:800;color:var(--accent);margin-bottom:8px}
-    .meta{font-size:13px;color:#bbb;margin-bottom:10px}
-    .link{word-break:break-all;color:#fff;background:#111;padding:8px;border-radius:8px}
-    .actions{display:flex;gap:8px;margin-top:10px}
-    .btn-small{padding:8px 10px;border-radius:8px;border:0;cursor:pointer}
-    .copy{background:#00cc88;color:#000;font-weight:700}
-    .open{background:#ffb400;color:#000;font-weight:700}
-    .ping{position:absolute;top:12px;left:12px;background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:8px;font-weight:700;color:#ddd}
-    .note{margin:18px 0;color:#aaa;font-size:14px}
-    footer{margin:30px 0;text-align:center;color:#aaa}
-    footer a{color:var(--accent);text-decoration:none}
+    body {
+      font-family: 'IranSans', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #fce4ec);
+      padding: 30px;
+      direction: rtl;
+    }
+
+    h1 {
+      text-align: center;
+      color: #444;
+      margin-bottom: 30px;
+      font-size: 2rem;
+    }
+
+    #proxy-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .proxy-card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 0.6s ease forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .proxy-link {
+      color: #0077c2;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      word-break: break-word;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .ping {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .copy-btn {
+      background-color: #ffca28;
+      color: #000;
+    }
+
+    .copy-btn:hover {
+      background-color: #ffc107;
+    }
+
+    .connect-btn {
+      background-color: #26a69a;
+      color: #fff;
+    }
+
+    .connect-btn:hover {
+      background-color: #00897b;
+    }
+
+    @media (max-width: 600px) {
+      .buttons {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <div class="left-controls">
-      <button id="hambBtn" style="border:0;background:transparent;color:var(--accent);font-size:22px">☰</button>
-      <button id="themeToggle" style="border:0;background:transparent;color:var(--accent);font-size:20px">🌙</button>
-    </div>
-    <h1>📡 پروکسی تلگرام</h1>
-  </header>
+  <h1>لیست پروکسی‌های تلگرام</h1>
+  <div id="proxy-list"></div>
 
-  <main>
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <div class="controls">
-        <input id="proxyCount" type="number" min="1" max="200" placeholder="مثلاً 10" />
-        <button id="genBtn">تولید محلی </button>
-        <button id="loadBtn">📡 بارگذاری از فایل</button>
-      </div>
-      <div style="text-align:left">
-        <small style="color:#bbb">اگر خواستی پراکسی‌های واقعی داشته باشی، فایل <b>Proxy.txt</b> را در ریشهٔ ریپو قرار بده.</small>
-      </div>
-    </div>
+  <script>
+    fetch('Proxy.txt')
+      .then(response => response.text())
+      .then(data => {
+        const proxies = data.trim().split('\n');
+        const container = document.getElementById('proxy-list');
 
-    <div class="note"> پروکسی ها به صورت رندوم نمایش داده میشوند</div>
+        proxies.forEach((proxy, index) => {
+          const url = new URL(proxy);
+          const server = url.searchParams.get('server');
 
-    <div id="grid" class="grid"></div>
+          const card = document.createElement('div');
+          card.className = 'proxy-card';
+          card.style.animationDelay = `${index * 0.1}s`;
 
-    <footer>
-      <a href="https://t.me/Academi_vpn">Telegram: @Academi_vpn</a> |
-      <a href="https://t.me/MahdiAGM0">Admin By: @MahdiAGM0</a>
-    </footer>
-  </main>
+          const link = document.createElement('a');
+          link.href = proxy;
+          link.textContent = proxy;
+          link.className = 'proxy-link';
 
-<script>
-  // theme
-  const themeBtn = document.getElementById('themeToggle');
-  themeBtn.addEventListener('click', () => {
-    document.body.classList.toggle('light');
-    themeBtn.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
-  });
+          const pingText = document.createElement('div');
+          pingText.className = 'ping';
+          pingText.textContent = 'در حال بررسی پینگ...';
 
-  // helpers
-  function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min}
-  function randIP(){return `${rand(1,255)}.${rand(0,255)}.${rand(0,255)}.${rand(1,254)}`}
-  function randPort(){return rand(1000,65000)}
-  function randSecret(){const hex='0123456789abcdef'; let s='ee'; for(let i=0;i<32;i++) s+=hex[rand(0,15)]; return s}
+          // تست پینگ تقریبی با fetch
+          const pingStart = performance.now();
+          fetch(`https://${server}`, { mode: 'no-cors' })
+            .then(() => {
+              const pingEnd = performance.now();
+              const ping = Math.round(pingEnd - pingStart);
+              pingText.textContent = `پینگ تقریبی: ${ping} میلی‌ثانیه`;
+            })
+            .catch(() => {
+              pingText.textContent = 'پینگ قابل دریافت نیست';
+            });
 
-  function makeCard(obj, idx){
-    const div = document.createElement('div'); div.className='card';
-    // پینگ فیک
-    const fakePing = Math.floor(Math.random() * 140) + 110;
-    const pingEl = document.createElement('div'); pingEl.className='ping'; pingEl.textContent = `Ping: ${fakePing} ms`;
-    div.appendChild(pingEl);
+          const buttons = document.createElement('div');
+          buttons.className = 'buttons';
 
-    const t = document.createElement('div'); t.className='title'; t.textContent = obj.comment || `${obj.server}:${obj.port}`;
-    const m = document.createElement('div'); m.className='meta'; m.textContent = `${(obj.type||'mtproto').toUpperCase()} • ${obj.server}:${obj.port}`;
-    const linkPre = document.createElement('pre'); linkPre.className='link';
-    let link = `tg://proxy?server=${obj.server}&port=${obj.port}&secret=${obj.secret}`;
-    linkPre.textContent = link;
-    const actions = document.createElement('div'); actions.className='actions';
-    const copyBtn = document.createElement('button'); copyBtn.className='btn-small copy'; copyBtn.textContent='کپی';
-    const openBtn = document.createElement('button'); openBtn.className='btn-small open'; openBtn.textContent='باز کردن';
-    copyBtn.addEventListener('click', ()=> { navigator.clipboard.writeText(link).then(()=> alert('کپی شد!')); });
-    openBtn.addEventListener('click', ()=> { window.location.href = link; });
-    actions.appendChild(copyBtn); actions.appendChild(openBtn);
-    div.appendChild(t); div.appendChild(m); div.appendChild(linkPre); div.appendChild(actions);
-    return div;
-  }
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.textContent = 'کپی';
+          copyBtn.onclick = () => navigator.clipboard.writeText(proxy);
 
-  function renderList(list){
-    const grid = document.getElementById('grid'); grid.innerHTML='';
-    list.forEach((p, i)=> grid.appendChild(makeCard(p,i)));
-  }
+          const connectBtn = document.createElement('button');
+          connectBtn.className = 'connect-btn';
+          connectBtn.textContent = 'اتصال';
+          connectBtn.onclick = () => window.location.href = proxy;
 
-  // generate local placeholders
-  document.getElementById('genBtn').addEventListener('click', ()=>{
-    const n = parseInt(document.getElementById('proxyCount').value) || 6;
-    const arr = [];
-    for(let i=0;i<n;i++){
-      arr.push({type:'mtproto', server:randIP(), port:randPort(), secret:randSecret(), comment:`Academi Proxy ${i+1}`});
-    }
-    renderList(arr);
-  });
+          buttons.appendChild(copyBtn);
+          buttons.appendChild(connectBtn);
 
-  // load from Proxy.txt
-  document.getElementById('loadBtn').addEventListener('click', async ()=>{
-    try{
-      const res = await fetch('/Proxy.txt', {cache:'no-store'});
-      if(!res.ok) throw new Error('فایل Proxy.txt یافت نشد یا دسترسی نیست');
-      const txt = await res.text();
-      const lines = txt.split(/\r?\n/).map(l=>l.trim()).filter(l=>l && !l.startsWith('//') && !l.startsWith('#'));
-      const list = [];
-      for(const ln of lines){
-        const sp = ln.split('|');
-        if(sp.length>=4){
-          list.push({type:sp[0], server:sp[1], port:sp[2], secret:sp[3], comment:sp[4]||`${sp[1]}:${sp[2]}`});
-        }
-      }
-      if(list.length===0) alert('فایلی پیدا شد ولی هیچ پراکسی معتبر نداشت.');
-      renderList(list);
-    }catch(err){
-      alert('خطا: ' + err.message);
-    }
-  });
-</script>
+          card.appendChild(link);
+          card.appendChild(pingText);
+          card.appendChild(buttons);
+          container.appendChild(card);
+        });
+      });
+  </script>
 </body>
 </html>
