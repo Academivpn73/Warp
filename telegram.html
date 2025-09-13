@@ -5,7 +5,7 @@
   <title>پروکسی‌های تلگرام</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
+        body {
       background-color: #121212;
       color: #fff;
       font-family: 'Vazirmatn', sans-serif;
@@ -20,8 +20,45 @@
     }
 
     .theme-toggle {
-      text-align: center;
-      margin: 20px 0;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+    }
+
+    .theme-toggle input {
+      display: none;
+    }
+
+    .theme-toggle label {
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+      background: #444;
+      border-radius: 13px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .theme-toggle label::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      transition: left 0.3s ease;
+    }
+
+    #themeSwitch:checked + label {
+      background: #ffeb3b;
+    }
+
+    #themeSwitch:checked + label::after {
+      left: 27px;
     }
 
     .menu-toggle {
@@ -31,6 +68,7 @@
       font-size: 28px;
       cursor: pointer;
       z-index: 1001;
+      color: #fff;
     }
 
     .menu-overlay {
@@ -70,7 +108,7 @@
 
     .proxy-container {
       max-width: 600px;
-      margin: 40px auto;
+      margin: 80px auto 40px auto;
       padding: 20px;
       background: #1e1e1e;
       border-radius: 12px;
@@ -175,31 +213,164 @@
   </style>
 </head>
 <body>
-    <div class="theme-toggle">
-    <label>
-      <input type="checkbox" id="themeSwitch">
-      🌙 حالت شب / ☀️ روز
-    </label>
-  </div>
-
-  <div class="menu-toggle" id="menuToggle">☰</div>
-  <div class="menu-overlay" id="menuOverlay"></div>
-  <div class="menu" id="sideMenu">
-  <div class="menu" id="sideMenu">
-  <a href="https://academivpn73.github.io/Warp/index.html">🏠 صفحه اصلی</a>
-  <a href="https://academivpn73.github.io/Warp/warp.html">🌐 تولید آی‌پی و کانفیگ Warp</a>
-  <a href="https://academivpn73.github.io/Warp/wg.html">⚡ ساخت کانفیگ WireGuard Gaming</a>
-  <a href="https://academivpn73.github.io/Warp/wg-v2ray.html">📉 خروجی WireGuard برای V2Ray</a>
-  <a href="https://academivpn73.github.io/Warp/telegram.html">📡 پروکسی‌های تلگرام</a>
-</div>
-
-  <div class="proxy-container" id="proxyContainer">
-    <h2>📡 پروکسی‌های فعال تلگرام</h2>
-    <button id="sortBtn" class="sort-btn">🔃 مرتب‌سازی بر اساس سرعت</button>
-    <button id="filterBtn" class="sort-btn">🚀 فقط پروکسی‌های سریع</button>
-    <div id="proxyList" class="proxy-list"></div>
-  </div>
   <script>
+  // کنترل منو
+  const menuToggle = document.getElementById("menuToggle");
+  const sideMenu = document.getElementById("sideMenu");
+  const menuOverlay = document.getElementById("menuOverlay");
+
+  menuToggle.addEventListener("click", () => {
+    sideMenu.style.right = "0";
+    menuOverlay.style.display = "block";
+  });
+
+  menuOverlay.addEventListener("click", () => {
+    sideMenu.style.right = "-250px";
+    menuOverlay.style.display = "none";
+  });
+
+  document.querySelectorAll("#sideMenu a").forEach(link => {
+    link.addEventListener("click", () => {
+      sideMenu.style.right = "-250px";
+      menuOverlay.style.display = "none";
+    });
+  });
+
+  // کنترل حالت شب/روز
+  const themeSwitch = document.getElementById("themeSwitch");
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "light") {
+    document.body.classList.add("light");
+    themeSwitch.checked = true;
+  }
+
+  themeSwitch.addEventListener("change", () => {
+    if (themeSwitch.checked) {
+      document.body.classList.add("light");
+      localStorage.setItem("theme", "light");
+    } else {
+      document.body.classList.remove("light");
+      localStorage.setItem("theme", "dark");
+    }
+  });
+
+  // دریافت پروکسی‌ها
+  const proxyList = document.getElementById("proxyList");
+  const proxyContainer = document.getElementById("proxyContainer");
+  const proxyURL = "https://raw.githubusercontent.com/Academivpn73/Warp/main/Proxy.txt";
+  const proxyData = [];
+
+  fetch(proxyURL)
+    .then(res => res.text())
+    .then(data => {
+      const proxies = data.trim().split("\n").filter(p => p.startsWith("tg://proxy?"));
+      
+      if (proxies.length === 0) {
+        proxyList.innerHTML = "<p>❌ هیچ پروکسی فعالی یافت نشد.</p>";
+        return;
+      }
+
+      const header = document.createElement("p");
+      header.style.textAlign = "center";
+      header.style.marginBottom = "20px";
+      header.style.fontSize = "16px";
+      header.textContent = `✅ تعداد پروکسی‌های فعال: ${proxies.length}`;
+      proxyContainer.insertBefore(header, proxyList);
+
+      proxies.forEach((proxy, index) => {
+        createProxyItem(proxy, index);
+      });
+    })
+    .catch(err => {
+      proxyList.innerHTML = "<p>❌ دریافت پروکسی‌ها با خطا مواجه شد.</p>";
+    });
+
+  function createProxyItem(proxy, index) {
+    const item = document.createElement("div");
+    item.className = "proxy-item";
+    item.style.animationDelay = `${index * 0.1}s`;
+
+    const link = document.createElement("div");
+    link.className = "proxy-link";
+    link.textContent = proxy;
+
+    const ping = document.createElement("div");
+    ping.className = "ping";
+    ping.textContent = "در حال تست پینگ...";
+
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "copy-btn";
+    copyBtn.textContent = "کپی";
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(proxy);
+      copyBtn.textContent = "✅ کپی شد";
+      setTimeout(() => copyBtn.textContent = "کپی", 2000);
+    };
+
+    item.appendChild(link);
+    item.appendChild(ping);
+    item.appendChild(copyBtn);
+    proxyList.appendChild(item);
+
+    proxyData.push({ proxy, pingElement: ping, item });
+    testPing(proxy, ping);
+  }
+
+  function testPing(proxy, pingElement) {
+    try {
+      const urlParams = new URLSearchParams(proxy.split("?")[1]);
+      const server = urlParams.get("server");
+      const start = performance.now();
+      fetch("https://" + server, { mode: "no-cors" })
+        .then(() => {
+          const latency = Math.round(performance.now() - start);
+          pingElement.textContent = `پینگ تقریبی: ${latency}ms`;
+          pingElement.dataset.ping = latency;
+
+          if (latency < 100) {
+            pingElement.classList.add("fast");
+          } else if (latency < 300) {
+            pingElement.classList.add("medium");
+          } else {
+            pingElement.classList.add("slow");
+          }
+        })
+        .catch(() => {
+          pingElement.textContent = "❌ پینگ ناموفق";
+          pingElement.classList.add("slow");
+          pingElement.dataset.ping = 9999;
+        });
+    } catch {
+      pingElement.textContent = "❌ خطا در تست پینگ";
+      pingElement.classList.add("slow");
+      pingElement.dataset.ping = 9999;
+    }
+  }
+
+  document.getElementById("sortBtn").addEventListener("click", () => {
+    proxyData.sort((a, b) => {
+      const pingA = parseInt(a.pingElement.dataset.ping) || 9999;
+      const pingB = parseInt(b.pingElement.dataset.ping) || 9999;
+      return pingA - pingB;
+    });
+
+    proxyList.innerHTML = "";
+    proxyData.forEach(({ item }) => proxyList.appendChild(item));
+  });
+
+  document.getElementById("filterBtn").addEventListener("click", () => {
+    proxyList.innerHTML = "";
+    proxyData.forEach(({ pingElement, item }) => {
+      const ping = parseInt(pingElement.dataset.ping) || 9999;
+      if (ping < 300) {
+        proxyList.appendChild(item);
+      }
+    });
+  });
+</script>
+</body>
+</html>
+<script>
   // کنترل منو
   const menuToggle = document.getElementById("menuToggle");
   const sideMenu = document.getElementById("sideMenu");
