@@ -1,33 +1,32 @@
-name: Update Proxy.txt
+name: آپدیت لیست پروکسی‌ها
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # اجرا هر 5 دقیقه برای تست
-  workflow_dispatch:       # امکان اجرای دستی از پنل GitHub
+    - cron: '0 */3 * * *'  # هر ۳ ساعت یک‌بار
+  workflow_dispatch:       # اجرای دستی هم فعال باشه
 
 jobs:
-  update-proxy:
+  update:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: کلون ریپو
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.x"
+    - name: نصب پایتون
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
 
-      - name: Install dependencies
-        run: pip install requests beautifulsoup4
+    - name: اجرای اسکریپت
+      run: |
+        pip install requests
+        python script.py
 
-      - name: Run proxy updater
-        run: python update_proxies.py
-
-      - name: Commit updated Proxy.txt
-        run: |
-          git config --global user.name "AcademiBot"
-          git config --global user.email "bot@academixy.com"
-          git add Proxy.txt
-          git commit -m "Auto-update Proxy.txt"
-          git push
+    - name: کامیت و پوش
+      run: |
+        git config --global user.name "amir-bot"
+        git config --global user.email "amir@example.com"
+        git add Proxy.txt
+        git commit -m "🔄 آپدیت خودکار لیست پروکسی‌ها"
+        git push
